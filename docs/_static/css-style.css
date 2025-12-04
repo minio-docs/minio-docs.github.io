@@ -1,0 +1,349 @@
+@font-face {
+   font-family: "Mark";
+   src: url("fonts/Mark-Regular.woff2") format("woff2"),
+        url("fonts/Mark-Regular.woff") format("woff");
+   font-weight: normal;
+   font-style: normal;
+}
+
+:root {
+  --table-border-color: #e6e6e6;
+  --minio-red: rgb(199, 46, 73);
+  --minio-midnight: #012b35;
+  --minio-nautical: #00303f;
+  --minio-meridian: #132742;
+  --minio-glacier: #edf7f7;
+
+}
+
+html {
+   scroll-behavior: smooth;
+}
+
+body {
+   font-family: Mark, Helvetica, sans-serif;
+   font-size: 15px;
+}
+
+div.flexwrapper {
+   display: flex;
+   flex-flow: row wrap;
+   
+   width: auto;
+   /* overflow: hidden;
+   Have to comment this out because clicking anchors breaks layout. */
+}
+
+body :target {
+   scroll-margin-top: 100px;
+}
+
+/* Left Column CSS */
+
+body div.left  {
+   width: 300px;
+   /* flex-shrink: 0; */
+   position: fixed;
+   display: block;
+   left: 0px;
+   top: 90px;
+   color: var(--minio-meridian);
+   z-index: 5;
+   background: #f9f9f9 0% 0% no-repeat padding-box;
+   opacity: 1;
+   height: 100vh;
+}
+
+body div.left a.active {
+   color: var(--minio-meridian);
+}
+
+body div.left li.toctree-l1 a {
+   color: #1C1C1C;
+}
+
+body div.left li.toctree-l2 a {
+   color: #2b2b2b;
+   font-size: 14px;
+}
+
+body div.left div.sphinxsidebarwrapper {
+   padding: 0 0 0 5px;
+   margin-top: 15px;
+}
+
+body div.left div.sphinxsidebarwrapper ul {
+   list-style: none;
+   margin-left: 10px;
+}
+
+body div.left button.sphinxsidebarbutton {
+   width: 100px;
+   background: none;
+   border: none;
+   position: fixed;
+   left: 200px;
+   top: 90px;
+   color: gray;
+   font-family: Mark, Helvetica, sans-serif;
+}
+
+body div.left div.sphinxsidebarwrapper a.current.reference.internal {
+   color: var(--minio-red);
+   font-weight: bold;
+   position: relative;
+
+}
+
+body div.left div.sphinxsidebarwrapper h1.logo {
+   font-size: 110%;
+   margin: 0px;
+}
+
+body div.left div.sphinxsidebarwrapper li.toctree-l1 {
+   margin-top: 10px;
+   margin-bottom: 10px;
+   padding-bottom: 5px;
+   list-style: none;
+}
+
+body div.left a.reference {
+   text-decoration: none;
+   border: none;
+}
+
+body div.left li.toctree-l2 {
+   margin: 10px 0 10px 0;
+}
+
+body div.left li.toctree-l3 {
+   margin: 10px 0 10px 0;
+}
+
+body div.left div.searchformwrapper {
+   margin-top: 25px;
+}
+
+#docs-search {
+   padding-left: 10px;
+}
+
+/* Center Column CSS */
+
+div.body div.alert-info {
+
+   padding-left: 5px;
+   padding-right: 5px;
+   border: 2px var(--minio-red) solid;
+   border-radius: 10px;
+ 
+}
+
+body div.center {
+   flex: 9;
+   overflow-y: auto;
+   overflow-x: hidden;
+   flex-grow: 9;
+   flex-shrink: 4;
+   z-index: 0;
+   margin-left: 300px;
+   margin-top: 90px;
+   scroll-margin-top: 85px;
+   height: 100%;
+   padding-left: 10px;
+   padding-right: 10px;
+}
+
+body div.center div.admonition p.admonition-title {
+   font-family: Mark, Helvetica, sans-serif;
+   font-size: 110%;
+}
+
+body div.center h1,
+body div.center h2,
+body div.center h3,
+body div.center h4,
+body div.center h5,
+body div.center h6 {
+   font-family: Mark, sans-serif;
+   font-weight: bold;
+   margin: 30px 0px 10px 0px;
+   padding: 0;
+}
+
+body div.center h2 {
+   font-size: 24px;
+}
+
+body div.center h3 {
+   font-size: 20px;
+}
+
+body div.center h4 {
+   font-size: 16px;
+}
+
+body div.center h4 {
+   font-size: 16px;
+}
+
+body div.indent {
+   margin-left: 20px;
+}
+
+body #toc-backref {
+   color: var(--minio-meridian);
+}
+
+body div.center a.reference.internal {
+   color: var(--minio-red);
+   text-decoration: none;
+}
+
+body div.center a.reference.internal code {
+   color: var(--minio-red);
+}
+
+body div.center a.toc-backref {
+   text-decoration: none;
+   color: var(--minio-meridian);
+}
+
+body div.center dl.minio {
+   margin-top: 10px;
+   margin-bottom: 10px;
+}
+
+body div.center code.descclassname {
+   font-weight: bold;
+}
+
+body div.center table.docutils {
+   border: 1px solid var(--table-border-color);
+}
+
+body div.center table.docutils th {
+   border-top: 1px solid var(--table-border-color);
+   border-bottom: 1px solid var(--table-border-color);
+   border-left: none;
+   border-right: none;
+ }
+ 
+ body div.center table.docutils td {
+   border-top: 1px solid var(--table-border-color);
+   border-bottom: 1px solid var(--table-border-color);
+   border-left: none;
+   border-right: none;
+ }
+
+body div.center dl {
+   margin: 20px 0 20px 0;
+}
+
+body div.center dl dd {
+   margin-left: 15px;
+}
+
+body div.center table.docutils td {
+   padding: 20px 10px;
+}
+
+body div.center div.footer {
+   text-align: center;
+   width: auto;
+   /*
+   Future work: Force padding up so that H3s can still scroll within the
+   IntersectionObserver window. Useful for ensuring short sections at the 
+   bottom of the page still get picked up. Might be useful for auto-hide of 
+   l2 content. 
+
+
+   padding-top: 100px;
+   */
+}
+
+/* Right-Column CSS */
+
+body div.right {
+   flex: 3;
+   flex-shrink: 0;
+   margin-left: 10px;
+   margin-top: 90px;
+   border-left: 1px solid var(--minio-glacier);
+   font-size: 13px;
+}
+
+body div.right div.topic {
+   background-color: #fff;
+   border-style: none;
+}
+
+body div.right div.localtoc {
+   position: sticky;
+   top: 85px;
+}
+
+body div.right ul.simple {
+   margin-left: 5px;
+}
+
+body div.right ul li {
+   padding-top: 5px;
+   padding-bottom: 5px;
+}
+
+body div.right ul {
+   list-style: none;
+}
+
+body div.right ul li ul {
+   margin-left: 10px;
+}
+
+body div.right a.reference.internal {
+   color: var(--minio-meridian);
+   text-decoration: none;
+   border-bottom: none;
+}
+
+body div.right p.active-p {
+   border-left: 5px solid var(--minio-red);
+   padding-left: 5px;
+   margin-left: -10px;
+}
+
+
+/* Collapse CSS */
+
+body div.left.collapsed {
+   left: -350px;
+}
+
+body div.left button.sphinxsidebarbutton.collapsed {
+   left: 0px;
+   position: fixed;
+}
+
+body div.column.collapsed {
+   margin-left: 50px;
+}
+
+/* Navigation CSS */
+
+nav.navigation img.logo {
+   height: 18px;
+   padding-top: 28.5px;
+   padding-left: 10px;
+}
+
+
+nav.navigation {
+   position: fixed;
+   background-color: black;
+   width: 100%;
+   height: 90px;
+   top: 0px;
+   z-index: 1;
+}
+
+/* Admonition CSS TODO*/

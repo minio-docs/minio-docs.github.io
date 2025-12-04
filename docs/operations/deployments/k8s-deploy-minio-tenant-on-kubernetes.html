@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Deploy a MinIO Tenant &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../../_static/js/main.js"></script>
+    <script defer="defer" src="../../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/operations/deployments/k8s-deploy-minio-tenant-on-kubernetes.html" />
+    <link rel="icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Deploy a MinIO Tenant with Helm Charts" href="k8s-deploy-minio-tenant-helm-on-kubernetes.html" />
+    <link rel="prev" title="MinIO Tenants on Kubernetes" href="k8s-minio-tenants.html" /><meta name="pagename" content="operations/deployments/k8s-deploy-minio-tenant-on-kubernetes"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="installation.html">Installation and Management</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kubernetes.html">Deploy MinIO on Kubernetes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="k8s-minio-operator.html">MinIO Kubernetes Operator</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="k8s-minio-tenants.html">MinIO Tenants on Kubernetes</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Deploy a MinIO Tenant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="k8s-deploy-minio-tenant-helm-on-kubernetes.html">Deploy a MinIO Tenant with Helm Charts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="k8s-modify-minio-tenant-on-kubernetes.html">Modify a MinIO Tenant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="k8s-upgrade-minio-tenant-on-kubernetes.html">Upgrade a MinIO Tenant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="k8s-expand-minio-tenant-on-kubernetes.html">Expand a MinIO Tenant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="k8s-delete-minio-tenant-on-kubernetes.html">Delete a MinIO Tenant</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="baremetal.html">Deploy MinIO on Baremetal</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/batch-framework.html">Batch Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/security-token-service.html">Security Token Service (STS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/kubernetes.html">Kubernetes Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/integrations.html">Integrations</a></li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="deploy-a-minio-tenant">
+<span id="deploy-minio-tenant-redhat-openshift"></span><span id="minio-k8s-deploy-minio-tenant"></span><h1>Deploy a MinIO Tenant<a class="headerlink" href="#deploy-a-minio-tenant" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#deploy-a-minio-tenant-using-kustomize" id="id1">Deploy a MinIO Tenant using Kustomize</a></p></li>
+<li><p><a class="reference internal" href="#connect-to-the-tenant" id="id2">Connect to the Tenant</a></p></li>
+</ul>
+</nav>
+<p>This procedure documents deploying a MinIO Tenant using the MinIO Operator.</p>
+<p>Deploying Single-Node topologies requires additional configurations not covered in this documentation.
+You can alternatively use a simple Kubernetes YAML object to describe a Single-Node topology for local testing and evaluation as necessary.
+MinIO does not recommend nor support single-node deployment topologies for production environments.</p>
+<p>This documentation assumes familiarity with all referenced Kubernetes concepts, utilities, and procedures.
+While this documentation <em>may</em> provide guidance for configuring or deploying Kubernetes-related resources on a best-effort basis, it is not a replacement for the official <a class="reference external" href="https://kubernetes.io/docs/">Kubernetes Documentation</a>.</p>
+<section id="deploy-a-minio-tenant-using-kustomize">
+<span id="minio-k8s-deploy-minio-tenant-security"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink">Deploy a MinIO Tenant using Kustomize</a><a class="headerlink" href="#deploy-a-minio-tenant-using-kustomize" title="Permalink to this heading"></a></h2>
+<p>The following procedure uses <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">-k</span></code> to deploy a MinIO Tenant using the <code class="docutils literal notranslate"><span class="pre">base</span></code> Kustomization template in the <a class="reference external" href="https://github.com/minio/operator/tree/master/examples/kustomization/base">MinIO Operator Github repository</a>.</p>
+<p>You can select a different base or pre-built template from the <a class="reference external" href="https://github.com/minio/operator/tree/master/examples/kustomization/">repository</a> as your starting point, or build your own Kustomization resources using the <a class="reference internal" href="../../reference/operator-crd.html#minio-operator-crd"><span class="std std-ref">MinIO Custom Resource Documentation</span></a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you use Kustomize to deploy a MinIO Tenant, you must use Kustomize to manage or upgrade that deployment.
+Do not use <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">krew</span></code>, a Helm Chart, or similar methods to manage or upgrade the MinIO Tenant.</p>
+</div>
+<p>This procedure is not exhaustive of all possible configuration options available in the <a class="reference internal" href="../../reference/operator-crd.html#minio-operator-crd"><span class="std std-ref">Tenant CRD</span></a>.
+It provides a baseline from which you can modify and tailor the Tenant to your requirements.</p>
+<div class="procedure docutils container">
+<ol class="arabic">
+<li><p>Create a YAML object for the Tenant</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">kustomize</span></code> command to produce a YAML file containing all Kubernetes resources necessary to deploy the <code class="docutils literal notranslate"><span class="pre">base</span></code> Tenant:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>kustomize<span class="w"> </span>https://github.com/minio/operator/examples/kustomization/base/<span class="w"> </span>&gt;<span class="w"> </span>tenant-base.yaml
+</pre></div>
+</div>
+<p>The command creates a single YAML file with multiple objects separated by the <code class="docutils literal notranslate"><span class="pre">---</span></code> line.
+Open the file in your preferred editor.</p>
+<p>The following steps reference each object based on it’s <code class="docutils literal notranslate"><span class="pre">kind</span></code> and <code class="docutils literal notranslate"><span class="pre">metadata.name</span></code> fields:</p>
+</li>
+<li><p>Configure the Tenant topology</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">Tenant</span></code> object describes the MinIO Tenant.</p>
+<p>The following fields share the <code class="docutils literal notranslate"><span class="pre">spec.pools[0]</span></code> prefix and control the number of servers, volumes per server, and storage class of all pods deployed in the Tenant:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">servers</span></code></p></td>
+<td><p>The number of MinIO pods to deploy in the Server Pool.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">volumesPerServer</span></code></p></td>
+<td><p>The number of persistent volumes to attach to each MinIO pod (<code class="docutils literal notranslate"><span class="pre">servers</span></code>).
+The Operator generates <code class="docutils literal notranslate"><span class="pre">volumesPerServer</span> <span class="pre">x</span> <span class="pre">servers</span></code> Persistant Volume Claims for the Tenant.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">volumeClaimTemplate.spec.storageClassName</span></code></p></td>
+<td><p>The Kubernetes storage class to associate with the generated Persistent Volume Claims.</p>
+<p>If no storage class exists matching the specified value <em>or</em> if the specified storage class cannot meet the requested number of PVCs or storage capacity, the Tenant may fail to start.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">volumeClaimTemplate.spec.resources.requests.storage</span></code></p></td>
+<td><p>The amount of storage to request for each generated PVC.</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>Configure Tenant Affinity or Anti-Affinity</p>
+<p>The MinIO Operator supports the following Kubernetes Affinity and Anti-Affinity configurations:</p>
+<ul class="simple">
+<li><p>Node Affinity (<code class="docutils literal notranslate"><span class="pre">spec.pools[n].nodeAffinity</span></code>)</p></li>
+<li><p>Pod Affinity (<code class="docutils literal notranslate"><span class="pre">spec.pools[n].podAffinity</span></code>)</p></li>
+<li><p>Pod Anti-Affinity (<code class="docutils literal notranslate"><span class="pre">spec.pools[n].podAntiAffinity</span></code>)</p></li>
+</ul>
+<p>MinIO recommends configuring Tenants with Pod Anti-Affinity to ensure that the Kubernetes schedule does not schedule multiple pods on the same worker node.</p>
+<p>If you have specific worker nodes on which you want to deploy the tenant, pass those node labels or filters to the <code class="docutils literal notranslate"><span class="pre">nodeAffinity</span></code> field to constrain the scheduler to place pods on those nodes.</p>
+</li>
+<li><p>Configure Network Encryption</p>
+<p>The MinIO Tenant CRD provides the following fields from which you can configure tenant TLS network encryption:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tenant.certificate.requestAutoCert</span></code></p></td>
+<td><p>Enable or disable MinIO <a class="reference internal" href="../network-encryption.html#minio-tls"><span class="std std-ref">automatic TLS certificate generation</span></a></p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code> or enabled if omitted.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tenant.certificate.certConfig</span></code></p></td>
+<td><p>Customize the behavior of <a class="reference internal" href="../network-encryption.html#minio-tls"><span class="std std-ref">automatic TLS</span></a>, if enabled.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tenant.certificate.externalCertSecret</span></code></p></td>
+<td><p>Enable TLS for multiple hostnames via Server Name Indication (SNI)</p>
+<p>Specify one or more Kubernetes secrets of type <code class="docutils literal notranslate"><span class="pre">kubernetes.io/tls</span></code> or <code class="docutils literal notranslate"><span class="pre">cert-manager</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tenant.certificate.externalCACertSecret</span></code></p></td>
+<td><p>Enable validation of client TLS certificates signed by unknown, third-party, or internal Certificate Authorities (CA).</p>
+<p>Specify one or more Kubernetes secrets of type <code class="docutils literal notranslate"><span class="pre">kubernetes.io/tls</span></code> containing the full chain of CA certificates for a given authority.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>Configure MinIO Environment Variables</p>
+<p>You can set MinIO Server environment variables using the <code class="docutils literal notranslate"><span class="pre">tenant.configuration</span></code> field.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tenant.configuration</span></code></p></td>
+<td><p>Specify a Kubernetes opaque secret whose data payload <code class="docutils literal notranslate"><span class="pre">config.env</span></code> contains each MinIO environment variable you want to set.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">config.env</span></code> data payload <strong>must</strong> be a base64-encoded string.
+You can create a local file, set your environment variables, and then use <code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">LOCALFILE</span> <span class="pre">|</span> <span class="pre">base64</span></code> to create the payload.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The YAML includes an object <code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">Secret</span></code> with <code class="docutils literal notranslate"><span class="pre">metadata.name:</span> <span class="pre">storage-configuration</span></code> that sets the root username, password, erasure parity settings, and enables Tenant Console.</p>
+<p>Modify this as needed to reflect your Tenant requirements.</p>
+</li>
+<li><p>Review the Namespace</p>
+<p>The YAML object <code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">Namespace</span></code> sets the default namespace for the Tenant to <code class="docutils literal notranslate"><span class="pre">minio-tenant</span></code>.</p>
+<p>You can change this value to create a different namespace for the Tenant.
+You must change <strong>all</strong> <code class="docutils literal notranslate"><span class="pre">metadata.namespace</span></code> values in the YAML file to match the Namespace.</p>
+</li>
+<li><p>Deploy the Tenant</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span> <span class="pre">-f</span></code> command to deploy the Tenant.</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>tenant-base.yaml
+</pre></div>
+</div>
+<p>The command creates each of the resources specified in the YAML object at the configured namespace.</p>
+<p>You can monitor the progress using the following command:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>watch<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>all<span class="w"> </span>-n<span class="w"> </span>minio-tenant
+</pre></div>
+</div>
+</li>
+<li><p>Expose the Tenant MinIO S3 API port</p>
+<p>To test the MinIO Client <a class="reference internal" href="../../reference/minio-mc.html#command-mc" title="mc"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span></code></a> from your local machine, forward the MinIO port and create an alias.</p>
+<ul class="simple">
+<li><p>Forward the Tenant’s MinIO port:</p></li>
+</ul>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>port-forward<span class="w"> </span>svc/MINIO_TENANT_NAME-hl<span class="w"> </span><span class="m">9000</span><span class="w"> </span>-n<span class="w"> </span>MINIO_TENANT_NAMESPACE
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Create an alias for the Tenant service:</p></li>
+</ul>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>mc<span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>myminio<span class="w"> </span>https://localhost:9000<span class="w"> </span>minio<span class="w"> </span>minio123<span class="w"> </span>--insecure
+</pre></div>
+</div>
+<p>You can use <a class="reference internal" href="../../reference/minio-mc/mc-mb.html#command-mc.mb" title="mc.mb"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">mb</span></code></a> to create a bucket on the Tenant:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>mc<span class="w"> </span>mb<span class="w"> </span>myminio/mybucket<span class="w"> </span>--insecure
+</pre></div>
+</div>
+<p>If you deployed your MinIO Tenant using TLS certificates minted by a trusted Certificate Authority (CA) you can omit the <code class="docutils literal notranslate"><span class="pre">--insecure</span></code> flag.</p>
+<p>See <a class="reference internal" href="#create-tenant-connect-tenant"><span class="std std-ref">Connect to the Tenant</span></a> for specific instructions.</p>
+</li>
+</ol>
+</div>
+</section>
+<section id="connect-to-the-tenant">
+<span id="create-tenant-connect-tenant"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Connect to the Tenant</a><a class="headerlink" href="#connect-to-the-tenant" title="Permalink to this heading"></a></h2>
+<p>The MinIO Operator creates services for the MinIO Tenant.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span> <span class="pre">svc</span> <span class="pre">-n</span> <span class="pre">NAMESPACE</span></code> command to review the deployed services.
+For Kubernetes services which use a custom <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> analog, you can substitute the name of that program.</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>minio-tenant-1
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>NAME<span class="w">                               </span>TYPE<span class="w">           </span>CLUSTER-IP<span class="w">       </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">          </span>AGE
+minio<span class="w">                              </span>LoadBalancer<span class="w">   </span><span class="m">10</span>.97.114.60<span class="w">     </span>&lt;pending&gt;<span class="w">     </span><span class="m">443</span>:30979/TCP<span class="w">    </span>2d3h
+TENANT-NAMESPACE-console<span class="w">           </span>LoadBalancer<span class="w">   </span><span class="m">10</span>.106.103.247<span class="w">   </span>&lt;pending&gt;<span class="w">     </span><span class="m">9443</span>:32095/TCP<span class="w">   </span>2d3h
+TENANT-NAMESPACE-hl<span class="w">                </span>ClusterIP<span class="w">      </span>None<span class="w">             </span>&lt;none&gt;<span class="w">        </span><span class="m">9000</span>/TCP<span class="w">         </span>2d3h
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">minio</span></code> service corresponds to the MinIO Tenant service.
+Applications should use this service for performing operations against the MinIO Tenant.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">*-console</span></code> service corresponds to the <a class="reference external" href="https://github.com/minio/console">MinIO Console</a>.
+Administrators should use this service for accessing the MinIO Console and performing administrative operations on the MinIO Tenant.</p></li>
+</ul>
+<p>The remaining services support Tenant operations and are not intended for consumption by users or administrators.</p>
+<p>By default each service is visible only within the Kubernetes cluster.
+Applications deployed inside the cluster can access the services using the <code class="docutils literal notranslate"><span class="pre">CLUSTER-IP</span></code>.</p>
+<p>Applications external to the Kubernetes cluster can access the services using the <code class="docutils literal notranslate"><span class="pre">EXTERNAL-IP</span></code>.
+This value is only populated for Kubernetes clusters configured for Ingress or a similar network access service.
+Kubernetes provides multiple options for configuring external access to services.</p>
+<p>See the Kubernetes documentation on <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types">Publishing Services (ServiceTypes)</a> and <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a> for more complete information on configuring external access to services.</p>
+<p>For specific flavors of Kubernetes, such as OpenShift or Rancher, defer to the service documentation on the preferred or available methods of exposing Services to internal or external access.</p>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

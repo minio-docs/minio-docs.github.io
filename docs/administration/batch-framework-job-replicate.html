@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Batch Replication &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../_static/js/main.js"></script>
+    <script defer="defer" src="../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/administration/batch-framework-job-replicate.html" />
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Batch Key Rotation" href="batch-framework-job-keyrotate.html" />
+    <link rel="prev" title="Batch Framework" href="batch-framework.html" /><meta name="pagename" content="administration/batch-framework-job-replicate"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../operations/deployments/installation.html">Installation and Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="batch-framework.html">Batch Framework</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Batch Replication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batch-framework-job-keyrotate.html">Batch Key Rotation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batch-framework-job-expire.html">Batch Expiration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/security-token-service.html">Security Token Service (STS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/kubernetes.html">Kubernetes Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/integrations.html">Integrations</a></li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="batch-replication">
+<span id="minio-batch-framework-replicate-job"></span><h1>Batch Replication<a class="headerlink" href="#batch-replication" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#behavior" id="id1">Behavior</a></p>
+<ul>
+<li><p><a class="reference internal" href="#access-control-and-requirements" id="id2">Access Control and Requirements</a></p></li>
+<li><p><a class="reference internal" href="#filter-replication-targets" id="id3">Filter Replication Targets</a></p></li>
+<li><p><a class="reference internal" href="#small-file-optimization" id="id4">Small File Optimization</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#replicate-batch-job-reference" id="id5">Replicate Batch Job Reference</a></p></li>
+<li><p><a class="reference internal" href="#sample-yaml-description-file-for-a-replicate-job-type" id="id6">Sample YAML Description File for a <code class="docutils literal notranslate"><span class="pre">replicate</span></code> Job Type</a></p></li>
+</ul>
+</nav>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version MinIO: </span>RELEASE.2022-10-08T20-11-00Z</p>
+<p>The Batch Framework was introduced with the <code class="docutils literal notranslate"><span class="pre">replicate</span></code> job type in the <a class="reference internal" href="../reference/minio-mc.html#command-mc" title="mc"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span></code></a> <a class="reference external" href="https://github.com/minio/mc/releases/tag/RELEASE.2022-10-08T20-11-00Z">RELEASE.2022-10-08T20-11-00Z</a>.</p>
+</div>
+<p>The MinIO Batch Framework allows you to create, manage, monitor, and execute jobs using a YAML-formatted job definition file (a “batch file”).
+The batch jobs run directly on the MinIO deployment to take advantage of the server-side processing power without constraints of the local machine where you run the <a class="reference internal" href="../reference/minio-mc.html#minio-client"><span class="std std-ref">MinIO Client</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">replicate</span></code> batch job replicates objects from one MinIO deployment (the <code class="docutils literal notranslate"><span class="pre">source</span></code> deployment) to another MinIO deployment (the <code class="docutils literal notranslate"><span class="pre">target</span></code> deployment).
+Either the <code class="docutils literal notranslate"><span class="pre">source</span></code> or the <code class="docutils literal notranslate"><span class="pre">target</span></code> <strong>must</strong> be the <a class="reference internal" href="batch-framework.html#minio-batch-local"><span class="std std-ref">local</span></a> deployment.</p>
+<p>Batch Replication between MinIO deployments have the following advantages over using <a class="reference internal" href="../reference/minio-mc/mc-mirror.html#command-mc.mirror" title="mc.mirror"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">mirror</span></code></a>:</p>
+<ul class="simple">
+<li><p>Removes the client to cluster network as a potential bottleneck</p></li>
+<li><p>A user only needs access to starting a batch job with no other permissions, as the job runs entirely server side on the cluster</p></li>
+<li><p>The job provides for retry attempts in event that objects do not replicate</p></li>
+<li><p>Batch jobs are one-time, curated processes allowing for fine control replication</p></li>
+<li><p>(MinIO to MinIO only) The replication process copies object versions from source to target</p></li>
+</ul>
+<p>Starting with the MinIO Server <code class="docutils literal notranslate"><span class="pre">RELEASE.2023-05-04T21-44-30Z</span></code>, the other deployment can be either another MinIO deployment or any S3-compatible location using a realtime storage class.
+Use filtering options in the replication <code class="docutils literal notranslate"><span class="pre">YAML</span></code> file to exclude objects stored in locations that require rehydration or other restoration methods before serving the requested object.
+Batch replication to these types of remotes uses <code class="docutils literal notranslate"><span class="pre">mc</span> <span class="pre">mirror</span></code> behavior.</p>
+<section id="behavior">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Behavior</a><a class="headerlink" href="#behavior" title="Permalink to this heading"></a></h2>
+<section id="access-control-and-requirements">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">Access Control and Requirements</a><a class="headerlink" href="#access-control-and-requirements" title="Permalink to this heading"></a></h3>
+<p>Batch replication shares similar access and permission requirements as <a class="reference internal" href="bucket-replication/bucket-replication-requirements.html#minio-bucket-replication-requirements"><span class="std std-ref">bucket replication</span></a>.</p>
+<p>The credentials for the “source” deployment must have a policy similar to the following:</p>
+<div class="copyable highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;admin:SetBucketTarget&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;admin:GetBucketTarget&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;admin:ListBatchJobs&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;admin:DescribeBatchJob&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;admin:StartBatchJob&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;admin:CancelBatchJob&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;Sid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EnableRemoteBucketConfiguration&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetReplicationConfiguration&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ListBucket&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ListBucketMultipartUploads&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetBucketLocation&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetBucketVersioning&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetObjectRetention&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetObjectLegalHold&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:PutReplicationConfiguration&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;arn:aws:s3:::*&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Sid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EnableReplicationRuleConfiguration&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The credentials for the “remote” deployment must have a policy similar to the following:</p>
+<div class="copyable highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetReplicationConfiguration&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ListBucket&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ListBucketMultipartUploads&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetBucketLocation&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetBucketVersioning&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetBucketObjectLockConfiguration&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetEncryptionConfiguration&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;arn:aws:s3:::*&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Sid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EnableReplicationOnBucket&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetReplicationConfiguration&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ReplicateTags&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:AbortMultipartUpload&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetObject&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetObjectVersion&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:GetObjectVersionTagging&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:PutObject&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:PutObjectRetention&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:PutBucketObjectLockConfiguration&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:PutObjectLegalHold&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:DeleteObject&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ReplicateObject&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;s3:ReplicateDelete&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;arn:aws:s3:::*&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;Sid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EnableReplicatingDataIntoBucket&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../reference/minio-mc-admin/mc-admin-user.html#command-mc.admin.user" title="mc.admin.user"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">admin</span> <span class="pre">user</span></code></a>, <a class="reference internal" href="../reference/minio-mc-admin/mc-admin-user-svcacct.html#command-mc.admin.user.svcacct" title="mc.admin.user.svcacct"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">admin</span> <span class="pre">user</span> <span class="pre">svcacct</span></code></a>, and <a class="reference internal" href="../reference/minio-mc-admin/mc-admin-policy.html#command-mc.admin.policy" title="mc.admin.policy"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">admin</span> <span class="pre">policy</span></code></a> for more complete documentation on adding users, access keys, and policies to a MinIO deployment.</p>
+<p>MinIO deployments configured for <a class="reference internal" href="identity-access-management/ad-ldap-access-management.html#minio-external-identity-management-ad-ldap"><span class="std std-ref">Active Directory/LDAP</span></a> or <a class="reference internal" href="identity-access-management/oidc-access-management.html#minio-external-identity-management-openid"><span class="std std-ref">OpenID Connect</span></a> user management can instead create dedicated <a class="reference internal" href="identity-access-management/minio-user-management.html#minio-idp-service-account"><span class="std std-ref">access keys</span></a> for supporting batch replication.</p>
+</section>
+<section id="filter-replication-targets">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Filter Replication Targets</a><a class="headerlink" href="#filter-replication-targets" title="Permalink to this heading"></a></h3>
+<p>The batch job definition file can limit the replication by bucket, prefix, and/or filters to only replicate certain objects.
+The access to objects and buckets for the replication process may be restricted by the credentials you provide in the YAML for either the source or target destinations.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version MinIO: </span>Server RELEASE.2023-04-07T05-28-58Z</p>
+<p>You can replicate from a remote MinIO deployment to the local deployment that runs the batch job.</p>
+</div>
+<p>For example, you can use a batch job to perform a one-time replication sync to push objects from a bucket on a local deployment at <code class="docutils literal notranslate"><span class="pre">minio-local/invoices/</span></code> to a bucket on a remote deployment at <code class="docutils literal notranslate"><span class="pre">minio-remote/invoices</span></code>.
+You can also pull objects from the remote deployment at <code class="docutils literal notranslate"><span class="pre">minio-remote/invoices</span></code> to the local deployment at <code class="docutils literal notranslate"><span class="pre">minio-local/invoices</span></code>.</p>
+</section>
+<section id="small-file-optimization">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Small File Optimization</a><a class="headerlink" href="#small-file-optimization" title="Permalink to this heading"></a></h3>
+<p>Starting with <a class="reference external" href="https://github.com/minio/minio/releases/tag/RELEASE.2023-12-09T18-17-51Z">RELEASE.2023-12-09T18-17-51Z</a>, batch replication by default automatically batches and compresses objects smaller than 5MiB to efficiently transfer data between the source and remote.
+The remote MinIO deployment can check and immediately apply lifecycle management tiering rules to batched objects.
+The functionality resembles that offered by S3 Snowball Edge small file batching.</p>
+<p>You can modify the compression settings in the <a class="reference internal" href="../reference/minio-mc/mc-batch-generate.html#minio-batch-job-types"><span class="std std-ref">replicate</span></a> job configuration.</p>
+</section>
+</section>
+<section id="replicate-batch-job-reference">
+<span id="minio-batch-framework-replicate-job-ref"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Replicate Batch Job Reference</a><a class="headerlink" href="#replicate-batch-job-reference" title="Permalink to this heading"></a></h2>
+<p>The YAML <strong>must</strong> define the source and target deployments.
+If the <em>source</em> deployment is remote, then the <em>target</em> deployment <strong>must</strong> be <code class="docutils literal notranslate"><span class="pre">local</span></code>.
+Optionally, the YAML can also define flags to filter which objects replicate, send notifications for the job, or define retry attempts for the job.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version MinIO: </span>RELEASE.2023-04-07T05-28-58Z</p>
+<p>You can replicate from a remote MinIO deployment to the local deployment that runs the batch job.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version MinIO: </span>RELEASE.2024-08-03T04-33-23Z</p>
+<p>This release introduces a new version of the Batch Job Replicate API, <code class="docutils literal notranslate"><span class="pre">v2</span></code>.
+The updated API allows you to list multiple prefixes on the source to replicate from.
+To replicate multiple prefixes from a source, specify <code class="docutils literal notranslate"><span class="pre">replicate.apiVersion</span></code> as <code class="docutils literal notranslate"><span class="pre">v2</span></code>.</p>
+<div class="copyable highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">replicate</span><span class="p">:</span>
+  <span class="n">apiVersion</span><span class="p">:</span> <span class="n">v1</span>
+  <span class="n">source</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">minio</span>
+    <span class="n">bucket</span><span class="p">:</span> <span class="n">mybucket</span>
+    <span class="n">prefix</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">prefix1</span>
+      <span class="o">-</span> <span class="n">prefix2</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<p>For the <strong>source deployment</strong></p>
+<ul>
+<li><p>Required information</p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">type:</span></code></p></td>
+<td><p>Must be <code class="docutils literal notranslate"><span class="pre">minio</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bucket:</span></code></p></td>
+<td><p>The bucket on the deployment.</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>Optional information</p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">prefix:</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The prefix on the object(s) that should replicate.</div>
+<div class="line">Beginning with MinIO Server <code class="docutils literal notranslate"><span class="pre">RELEASE.2024-08-03T04-33-23Z</span></code>, v2 of the Batch Job Replicate API allows you to list multiple prefixes.</div>
+<div class="line">Specify <code class="docutils literal notranslate"><span class="pre">replicate.apiVersion</span></code> as <code class="docutils literal notranslate"><span class="pre">v2</span></code> to replicate from multiple prefixes.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">endpoint:</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Location of the deployment to use for either the source or the target of a replication batch job.</div>
+<div class="line">For example, <code class="docutils literal notranslate"><span class="pre">https://minio.example.net</span></code>.</div>
+<div class="line"><br /></div>
+<div class="line">If the deployment is the <a class="reference internal" href="../reference/minio-mc/mc-alias-set.html#alias"><span class="std std-ref">mc alias set</span></a> specified to the command, omit this field to direct MinIO to use that alias for the endpoint and credentials values.</div>
+<div class="line">Either the source deployment <em>or</em> the remote deployment <em>must</em> be the <a class="reference internal" href="batch-framework.html#minio-batch-local"><span class="std std-ref">“local”</span></a> alias.</div>
+<div class="line">The non-“local” deployment must specify the <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> and <code class="docutils literal notranslate"><span class="pre">credentials</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">path:</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Directs MinIO to use Path or Virtual Style (DNS) lookup of the bucket.</div>
+<div class="line"><br /></div>
+<div class="line">- Specify <code class="docutils literal notranslate"><span class="pre">on</span></code> for Path style</div>
+<div class="line">- Specify <code class="docutils literal notranslate"><span class="pre">off</span></code> for Virtual style</div>
+<div class="line">- Specify <code class="docutils literal notranslate"><span class="pre">auto</span></code> to let MinIO determine the correct lookup style.</div>
+<div class="line"><br /></div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">credentials:</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The <code class="docutils literal notranslate"><span class="pre">accesskey:</span></code> and <code class="docutils literal notranslate"><span class="pre">secretKey:</span></code> or the <code class="docutils literal notranslate"><span class="pre">sessionToken:</span></code> that grants access to the object(s).</div>
+<div class="line">Only specify for the deployment that is not the <a class="reference internal" href="batch-framework.html#minio-batch-local"><span class="std std-ref">local</span></a> deployment.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">snowball</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><em>version added</em>: RELEASE.2023-12-09T18-17-51Z</div>
+<div class="line"><br /></div>
+<div class="line">Configuration options for controlling the batch-and-compress functionality.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">snowball.disable</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specify <code class="docutils literal notranslate"><span class="pre">true</span></code> to disable the batch-and-compress functionality during replication.</div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">snowball.batch</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specify the maximum integer number of objects to batch for compression.</div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">100</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">snowball.inmemory</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specify <code class="docutils literal notranslate"><span class="pre">false</span></code> to stage archives using local storage or <code class="docutils literal notranslate"><span class="pre">true</span></code> to stage to memory (RAM).</div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">snowball.compress</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specify <code class="docutils literal notranslate"><span class="pre">true</span></code> to generate compress batched objects over the wire using the <a class="reference external" href="https://en.wikipedia.org/wiki/Snappy_(compression)">S2/Snappy compression algorithm</a>.</div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code> or no compression.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">snowball.smallerThan</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specify the size of object in Megabits (MiB) under which MinIO should batch objects.</div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">5MiB</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">snowball.skipErrs</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specify <code class="docutils literal notranslate"><span class="pre">false</span></code> to direct MinIO to halt on any object which produces errors on read.</div>
+<div class="line">Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<p>For the <strong>target deployment</strong></p>
+<ul>
+<li><p>Required information</p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">type:</span></code></p></td>
+<td><p>Must be <code class="docutils literal notranslate"><span class="pre">minio</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bucket:</span></code></p></td>
+<td><p>The bucket on the deployment.</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>Optional information</p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">prefix:</span></code></p></td>
+<td><p>The prefix on the object(s) to replicate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">endpoint:</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The location of the target deployment.</div>
+<div class="line"><br /></div>
+<div class="line">If the target is the <a class="reference internal" href="../reference/minio-mc/mc-alias-set.html#alias"><span class="std std-ref">alias</span></a> specified to the command, you can omit this and the <code class="docutils literal notranslate"><span class="pre">credentials</span></code> fields.</div>
+<div class="line">If the target is “local”, the source <em>must</em> specify the remote deployment with <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> and <code class="docutils literal notranslate"><span class="pre">credentials</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">credentials:</span></code></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">accesskey</span></code> and <code class="docutils literal notranslate"><span class="pre">secretKey</span></code> or the <code class="docutils literal notranslate"><span class="pre">sessionToken</span></code> that grants access to the object(s).</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<p>For <strong>filters</strong></p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">newerThan:</span></code></p></td>
+<td><p>A string representing a length of time in <code class="docutils literal notranslate"><span class="pre">#d#h#s</span></code> format.</p>
+<p>Only objects newer than the specified length of time replicate.
+For example, <code class="docutils literal notranslate"><span class="pre">7d</span></code>, <code class="docutils literal notranslate"><span class="pre">24h</span></code>, <code class="docutils literal notranslate"><span class="pre">5d12h30s</span></code> are valid strings.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">olderThan:</span></code></p></td>
+<td><p>A string representing a length of time in <code class="docutils literal notranslate"><span class="pre">#d#h#s</span></code> format.</p>
+<p>Only objects older than the specified length of time replicate.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">createdAfter:</span></code></p></td>
+<td><p>A date in <code class="docutils literal notranslate"><span class="pre">YYYY-MM-DDTHH:MM:SSZ</span></code> <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC3339</strong></a>  date and time format.</p>
+<p>Only objects created after the date replicate.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">createdBefore:</span></code></p></td>
+<td><p>A date in <code class="docutils literal notranslate"><span class="pre">YYYY-MM-DDTHH:MM:SSZ</span></code> <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC3339</strong></a>  date and time format.</p>
+<p>Only objects created prior to the date replicate.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For <strong>notifications</strong></p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">endpoint:</span></code></p></td>
+<td><p>The predefined endpoint to send events for notifications.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">token:</span></code></p></td>
+<td><p>An optional <abbr>JWT &lt;JSON Web Token&gt;</abbr> to access the <code class="docutils literal notranslate"><span class="pre">endpoint</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For <strong>retry attempts</strong></p>
+<p>If something interrupts the job, you can define how many attempts to retry the job batch.
+For each retry, you can also define how long to wait between attempts.</p>
+<table class="docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">attempts:</span></code></p></td>
+<td><p>Number of tries to complete the batch job before giving up.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">delay:</span></code></p></td>
+<td><p>The least amount of time to wait between each attempt.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sample-yaml-description-file-for-a-replicate-job-type">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Sample YAML Description File for a <code class="docutils literal notranslate"><span class="pre">replicate</span></code> Job Type</a><a class="headerlink" href="#sample-yaml-description-file-for-a-replicate-job-type" title="Permalink to this heading"></a></h2>
+<p>Use <a class="reference internal" href="../reference/minio-mc/mc-batch-generate.html#command-mc.batch.generate" title="mc.batch.generate"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">batch</span> <span class="pre">generate</span></code></a> to create a basic <code class="docutils literal notranslate"><span class="pre">replicate</span></code> batch job for further customization.</p>
+<p>For the <a class="reference internal" href="batch-framework.html#minio-batch-local"><span class="std std-ref">local</span></a> deployment, do not specify the endpoint or credentials.
+Either delete or comment out those lines for the source or the target section, depending on which is the <code class="docutils literal notranslate"><span class="pre">local</span></code>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">replicate</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="w">  </span><span class="c1"># source of the objects to be replicated</span>
+<span class="w">  </span><span class="nt">source</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TYPE</span><span class="w"> </span><span class="c1"># valid values are &quot;s3&quot; or &quot;minio&quot;</span>
+<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BUCKET</span>
+<span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PREFIX</span><span class="w"> </span><span class="c1"># &#39;PREFIX&#39; is optional</span>
+<span class="w">    </span><span class="c1"># If your source is the &#39;local&#39; alias specified to &#39;mc batch start&#39;, then the &#39;endpoint&#39; and &#39;credentials&#39; fields are optional and can be omitted</span>
+<span class="w">    </span><span class="c1"># Either the &#39;source&#39; or &#39;remote&#39; *must* be the &quot;local&quot; deployment</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http[s]://HOSTNAME:PORT&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="c1"># path: &quot;on|off|auto&quot; # &quot;on&quot; enables path-style bucket lookup. &quot;off&quot; enables virtual host (DNS)-style bucket lookup. Defaults to &quot;auto&quot;</span>
+<span class="w">    </span><span class="nt">credentials</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">accessKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ACCESS-KEY</span><span class="w"> </span><span class="c1"># Required</span>
+<span class="w">      </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SECRET-KEY</span><span class="w"> </span><span class="c1"># Required</span>
+<span class="w">    </span><span class="c1"># sessionToken: SESSION-TOKEN # Optional only available when rotating credentials are used</span>
+<span class="w">    </span><span class="nt">snowball</span><span class="p">:</span><span class="w"> </span><span class="c1"># automatically activated if the source is local</span>
+<span class="w">      </span><span class="nt">disable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># optionally turn-off snowball archive transfer</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span><span class="c1"># upto this many objects per archive</span>
+<span class="w">      </span><span class="nt">inmemory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># indicates if the archive must be staged locally or in-memory</span>
+<span class="w">      </span><span class="nt">compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># S2/Snappy compressed archive</span>
+<span class="w">      </span><span class="nt">smallerThan</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5MiB</span><span class="w"> </span><span class="c1"># create archive for all objects smaller than 5MiB</span>
+<span class="w">      </span><span class="nt">skipErrs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># skips any source side read() errors</span>
+
+<span class="w">  </span><span class="c1"># target where the objects must be replicated</span>
+<span class="w">  </span><span class="nt">target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TYPE</span><span class="w"> </span><span class="c1"># valid values are &quot;s3&quot; or &quot;minio&quot;</span>
+<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BUCKET</span>
+<span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PREFIX</span><span class="w"> </span><span class="c1"># &#39;PREFIX&#39; is optional</span>
+<span class="w">    </span><span class="c1"># If your source is the &#39;local&#39; alias specified to &#39;mc batch start&#39;, then the &#39;endpoint&#39; and &#39;credentials&#39; fields are optional and can be omitted</span>
+
+<span class="w">    </span><span class="c1"># Either the &#39;source&#39; or &#39;remote&#39; *must* be the &quot;local&quot; deployment</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http[s]://HOSTNAME:PORT&quot;</span>
+<span class="w">    </span><span class="c1"># path: &quot;on|off|auto&quot; # &quot;on&quot; enables path-style bucket lookup. &quot;off&quot; enables virtual host (DNS)-style bucket lookup. Defaults to &quot;auto&quot;</span>
+<span class="w">    </span><span class="nt">credentials</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">accessKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ACCESS-KEY</span>
+<span class="w">      </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SECRET-KEY</span>
+<span class="w">    </span><span class="c1"># sessionToken: SESSION-TOKEN # Optional only available when rotating credentials are used</span>
+
+<span class="w">  </span><span class="c1"># NOTE: All flags are optional</span>
+<span class="w">  </span><span class="c1"># - filtering criteria only applies for all source objects match the criteria</span>
+<span class="w">  </span><span class="c1"># - configurable notification endpoints</span>
+<span class="w">  </span><span class="c1"># - configurable retries for the job (each retry skips successfully previously replaced objects)</span>
+<span class="w">  </span><span class="nt">flags</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">newerThan</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;7d&quot;</span><span class="w"> </span><span class="c1"># match objects newer than this value (e.g. 7d10h31s)</span>
+<span class="w">      </span><span class="nt">olderThan</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;7d&quot;</span><span class="w"> </span><span class="c1"># match objects older than this value (e.g. 7d10h31s)</span>
+<span class="w">      </span><span class="nt">createdAfter</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datetime&quot;</span><span class="w"> </span><span class="c1"># match objects created after this date and time in RFC3339 format</span>
+<span class="w">      </span><span class="nt">createdBefore</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datetime&quot;</span><span class="w"> </span><span class="c1"># match objects created before this date and time in RFC3339 format</span>
+
+<span class="w">      </span><span class="c1">## NOTE: tags are not supported when &quot;source&quot; is remote.</span>
+<span class="w">      </span><span class="c1"># tags:</span>
+<span class="w">      </span><span class="c1">#   - key: &quot;name&quot;</span>
+<span class="w">      </span><span class="c1">#     value: &quot;pick*&quot; # match objects with tag &#39;name&#39;, with all values starting with &#39;pick&#39;</span>
+
+<span class="w">      </span><span class="c1"># metadata:</span>
+<span class="w">      </span><span class="c1">#   - key: &quot;content-type&quot;</span>
+<span class="w">      </span><span class="c1">#     value: &quot;image/*&quot; # match objects with &#39;content-type&#39;, with all values starting with &#39;image/&#39;</span>
+
+<span class="w">    </span><span class="nt">notify</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://notify.endpoint&quot;</span><span class="w"> </span><span class="c1"># notification endpoint to receive job status events</span>
+<span class="w">      </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bearer</span><span class="nv"> </span><span class="s">xxxxx&quot;</span><span class="w"> </span><span class="c1"># optional authentication token for the notification endpoint</span>
+
+<span class="w">    </span><span class="nt">retry</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"> </span><span class="c1"># number of retries for the job before giving up</span>
+<span class="w">      </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500ms&quot;</span><span class="w"> </span><span class="c1"># least amount of delay between each retry</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

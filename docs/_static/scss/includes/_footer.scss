@@ -1,0 +1,24 @@
+div.footer {
+    all: revert;
+    width: 100%;
+    margin: 3rem 0 0 0;
+    font-size: $font-size-sm;
+    opacity: 0.75;
+    text-align: center;
+    border-top: 1px solid var(--theme-light-bg);
+    padding-top: 1.15rem;
+    
+    &, a {
+        color: var(--text-muted-color);
+    }
+
+    a {
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    p {
+        margin: 0;
+    }
+}

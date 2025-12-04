@@ -1,0 +1,44 @@
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    &:focus,
+    &:active {
+        outline: none;
+    }
+}
+
+html {
+    font-size: $root-font-size;
+    scroll-padding: 1rem;
+
+    @include breakpoint-min(breakpoints(lg)) { 
+        &.read-mode {
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+body {
+    all: unset;
+    font-family: $font-family-base;
+    font-size: 1rem;
+    line-height: $body-line-height;
+    color: var(--text-color);
+    font-weight: $font-weight-normal;
+    background-color: var(--body-bg);
+    display: flex;
+    flex-direction: column;
+    word-break: break-word;
+    overflow-x: hidden;
+    font-variant-ligatures: none;
+
+    @include breakpoint-min(breakpoints(xl)) {
+        background: url(../img/bg.png) no-repeat top 5rem right;
+        background-size: 120px;
+    }
+}

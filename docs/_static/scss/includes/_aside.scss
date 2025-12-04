@@ -1,0 +1,143 @@
+// ----------------------
+// Sidebar
+// ----------------------
+div.sidebar {
+    --scrollbar-bg: var(--sidebar-scrollbar-bg);
+    --scrollbar-hover-bg: var(--sidebar-scrollbar-hover-bg);
+
+    width: $sidebar-width;
+    position: sticky;
+    top: 0;
+    background-color: $white;
+    transition: opacity 400ms, transform 300ms;
+    padding-top: var(--content-padding);
+    overflow-y: auto;
+    height: 100vh;
+    z-index: $z-index-header - 2;
+    margin: 0;
+    border: none;
+
+    @include breakpoint-max(breakpoints(xl)) {
+        padding: var(--content-padding);
+    }
+    
+    // Sidebar is set to hidden by default and later shown with JS.
+    // This prevents the scrollbar-flicker due to
+    // some other related JS functions that are bind with sidebar scroll.
+    &.inactive {
+        overflow: hidden;
+    }
+
+    @include breakpoint-min(breakpoints(lg)) {
+        .hide-aside {
+            display: none;
+        }
+    }
+
+    @include breakpoint-max(breakpoints(lg)) {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: $z-index-header + 1;
+        box-shadow: 0.5rem 0 0.75rem rgba(0, 0, 0, 0.175);
+        display: none;
+        
+        .hide-aside {
+            text-align: right;
+            margin: 0 -0.75rem 1rem 0;
+        }
+    }
+}
+
+.doc-active {
+    div.sidebar {
+        display: block;
+    }
+}
+
+.sidebar__title {
+    margin: 0 0 1rem;
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+    display: block;
+
+    &, &:hover {
+        color: var(--headings-color);
+    }
+}
+
+// ----------------------
+// Docs Navigation
+// ----------------------
+.docs {
+    font-size: $font-size-sm;
+
+    ul {
+        list-style: none;
+        margin: 0;
+
+        & > li {
+            & > a {
+                color: var(--text-muted-color);
+                display: block;
+                padding: 0.4rem 0;
+
+                &:hover {
+                    color: var(--text-color);
+                }
+
+                code {
+                    background-color: var(--theme-light-bg);
+                    color: var(--text-color);
+                    font-size: $font-size-xs;
+                    margin: -0.5rem 0;
+                    transition: background-color 300ms, color 300ms;
+                    padding: 0.2rem 0.45rem;
+                    border-radius: $border-radius;
+    
+                    &:hover {
+                        background-color: var(--theme-light-hover-bg);
+                        opacity: 1;
+                    }
+                }
+            }
+
+            &.current > a,
+            & > a.current {
+                font-weight: $font-weight-medium;
+                color: var(--docs-nav-active-color);
+
+                code {
+                    color: var(--docs-nav-active-color);
+                    background-color: var(--docs-nav-active-code-bg);
+                }
+            }
+        }
+
+        ul {
+            margin: 0 0 0 0.5rem;
+        }
+    }
+}
+
+.docs__title {
+    margin: 2rem 0 0.5rem;
+    border-bottom: 1px solid var(--docs-nav-group-border-color);
+    color: var(--text-color);
+    font-weight: $font-weight-medium;
+    padding-bottom: 0.3rem;
+}
+
+
+// ----------------------
+// Misc
+// ----------------------
+.aside-backdrop {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 11;
+    cursor: pointer;
+}

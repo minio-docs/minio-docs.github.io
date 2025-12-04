@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Disaggregated HDP Spark and Hive with MinIO &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../_static/js/main.js"></script>
+    <script defer="defer" src="../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/integrations/disaggregated-spark-and-hadoop-hive-with-minio.html" />
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="AWS CLI with MinIO Server" href="aws-cli-with-minio.html" />
+    <link rel="prev" title="Using MinIO with Veeam" href="using-minio-with-veeam.html" /><meta name="pagename" content="integrations/disaggregated-spark-and-hadoop-hive-with-minio"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../operations/deployments/installation.html">Installation and Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/batch-framework.html">Batch Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/security-token-service.html">Security Token Service (STS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/kubernetes.html">Kubernetes Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="integrations.html">Integrations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="using-minio-with-veeam.html">Using MinIO with Veeam</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Disaggregated HDP Spark and Hive with MinIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-cli-with-minio.html">AWS CLI with MinIO Server </a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup-nginx-proxy-with-minio.html">Configure NGINX Proxy for MinIO Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presigned-put-upload-via-browser.html">Upload Files Using Pre-signed URLs </a></li>
+<li class="toctree-l2"><a class="reference internal" href="generate-lets-encrypt-certificate-using-certbot-for-minio.html">Generate Let’s Encrypt certificate using Certbot for MinIO </a></li>
+</ul>
+</li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="disaggregated-hdp-spark-and-hive-with-minio">
+<h1>Disaggregated HDP Spark and Hive with MinIO<a class="headerlink" href="#disaggregated-hdp-spark-and-hive-with-minio" title="Permalink to this heading"></a></h1>
+<section id="cloud-native-architecture">
+<h2><strong>1. Cloud-native Architecture</strong><a class="headerlink" href="#cloud-native-architecture" title="Permalink to this heading"></a></h2>
+<p><img alt="cloud-native" src="../_images/image1.png" /></p>
+<p>Kubernetes manages stateless Spark and Hive containers elastically on the compute nodes. Spark has native scheduler integration with Kubernetes. Hive, for legacy reasons, uses YARN scheduler on top of Kubernetes.</p>
+<p>All access to MinIO object storage is via S3/SQL SELECT API. In addition to the compute nodes, MinIO containers are also managed by Kubernetes as stateful containers with local storage (JBOD/JBOF) mapped as persistent local volumes. This architecture enables multi-tenant MinIO, allowing isolation of data between customers.</p>
+<p>MinIO also supports multi-cluster, multi-site federation similar to AWS regions and tiers. Using MinIO Information Lifecycle Management (ILM), you can configure data to be tiered between NVMe based hot storage, and HDD based warm storage. All data is encrypted with per-object key. Access Control and Identity Management between the tenants are managed by MinIO using OpenID Connect or Kerberos/LDAP/AD.</p>
+</section>
+<section id="prerequisites">
+<h2><strong>2. Prerequisites</strong><a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Install Hortonworks Distribution using this <a class="reference external" href="https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation/content/ch_Installing_Ambari.html">guide.</a></p>
+<ul>
+<li><p><a class="reference external" href="https://docs.hortonworks.com/HDPDocuments/Ambari-2.7.1.0/bk_ambari-installation/content/set_up_the_ambari_server.html">Setup Ambari</a> which automatically sets up YARN</p></li>
+<li><p><a class="reference external" href="https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/installing-spark/content/installing_spark.html">Installing Spark</a></p></li>
+</ul>
+</li>
+<li><p>Install MinIO Distributed Server using one of the guides below.</p>
+<ul>
+<li><p><a class="reference external" href="https://docs.min.io/community/minio-object-store/operations/deployments/kubernetes.html">Deployment based on Kubernetes</a></p></li>
+<li><p><a class="reference external" href="https://docs.min.io/community/minio-object-store/operations/deployments/k8s-deploy-operator-helm-on-kubernetes.html">Deployment based on MinIO Helm Chart</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="configure-hadoop-spark-hive-to-use-minio">
+<h2><strong>3. Configure Hadoop, Spark, Hive to use MinIO</strong><a class="headerlink" href="#configure-hadoop-spark-hive-to-use-minio" title="Permalink to this heading"></a></h2>
+<p>After successful installation navigate to the Ambari UI <code class="docutils literal notranslate"><span class="pre">http://&lt;ambari-server&gt;:8080/</span></code> and login using the default credentials: [<strong><em>username: admin, password: admin</em></strong>]</p>
+<p><img alt="ambari-login" src="../_images/image3.png" /></p>
+<section id="configure-hadoop">
+<h3><strong>3.1 Configure Hadoop</strong><a class="headerlink" href="#configure-hadoop" title="Permalink to this heading"></a></h3>
+<p>Navigate to <strong>Services</strong> -&gt; <strong>HDFS</strong> -&gt; <strong>CONFIGS</strong> -&gt; <strong>ADVANCED</strong> as shown below</p>
+<p><img alt="hdfs-configs" src="../_images/image2.png" /></p>
+<p>Navigate to <strong>Custom core-site</strong> to configure MinIO parameters for <code class="docutils literal notranslate"><span class="pre">_s3a_</span></code> connector</p>
+<p><img alt="s3a-config" src="../_images/image5.png" /></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">yq</span>
+<span class="n">alias</span> <span class="n">kv</span><span class="o">-</span><span class="n">pairify</span><span class="o">=</span><span class="s1">&#39;yq &quot;.configuration[]&quot; | jq &quot;.[]&quot; | jq -r &quot;.name + </span><span class="se">\&quot;</span><span class="s1">=</span><span class="se">\&quot;</span><span class="s1"> + .value&quot;&#39;</span>
+</pre></div>
+</div>
+<p>Let’s take for example a set of 12 compute nodes with an aggregate memory of <em>1.2TiB</em>, we need to do following settings for optimal results. Add the following optimal entries for <em>core-site.xml</em> to configure <em>s3a</em> with <strong>MinIO</strong>. Most important options here are</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cat ${HADOOP_CONF_DIR}/core-site.xml | kv-pairify | grep &quot;mapred&quot;
+
+mapred.maxthreads.generate.mapoutput=2 # Num threads to write map outputs
+mapred.maxthreads.partition.closer=0 # Asynchronous map flushers
+mapreduce.fileoutputcommitter.algorithm.version=2 # Use the latest committer version
+mapreduce.job.reduce.slowstart.completedmaps=0.99 # 99% map, then reduce
+mapreduce.reduce.shuffle.input.buffer.percent=0.9 # Min % buffer in RAM
+mapreduce.reduce.shuffle.merge.percent=0.9 # Minimum % merges in RAM
+mapreduce.reduce.speculative=false # Disable speculation for reducing
+mapreduce.task.io.sort.factor=999 # Threshold before writing to drive
+mapreduce.task.sort.spill.percent=0.9 # Minimum % before spilling to drive
+</pre></div>
+</div>
+<p>S3A is the connector to use S3 and other S3-compatible object stores such as MinIO. MapReduce workloads typically interact with object stores in the same way they do with HDFS. These workloads rely on HDFS atomic rename functionality to complete writing data to the datastore. Object storage operations are atomic by nature and they do not require/implement rename API. The default S3A committer emulates renames through copy and delete APIs. This interaction pattern causes significant loss of performance because of the write amplification. <em>Netflix</em>, for example, developed two new staging committers - the Directory staging committer and the Partitioned staging committer - to take full advantage of native object storage operations. These committers do not require rename operation. The two staging committers were evaluated, along with another new addition called the Magic committer for benchmarking.</p>
+<p>It was found that the directory staging committer was the fastest among the three, S3A connector should be configured with the following parameters for optimal results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cat ${HADOOP_CONF_DIR}/core-site.xml | kv-pairify | grep &quot;s3a&quot;
+
+fs.s3a.access.key=minio
+fs.s3a.secret.key=minio123
+fs.s3a.path.style.access=true
+fs.s3a.block.size=512M
+fs.s3a.buffer.dir=${hadoop.tmp.dir}/s3a
+fs.s3a.committer.magic.enabled=false
+fs.s3a.committer.name=directory
+fs.s3a.committer.staging.abort.pending.uploads=true
+fs.s3a.committer.staging.conflict-mode=append
+fs.s3a.committer.staging.tmp.path=/tmp/staging
+fs.s3a.committer.staging.unique-filenames=true
+fs.s3a.connection.establish.timeout=5000
+fs.s3a.connection.ssl.enabled=false
+fs.s3a.connection.timeout=200000
+fs.s3a.endpoint=http://minio:9000
+fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
+
+fs.s3a.committer.threads=2048 # Number of threads writing to MinIO
+fs.s3a.connection.maximum=8192 # Maximum number of concurrent conns
+fs.s3a.fast.upload.active.blocks=2048 # Number of parallel uploads
+fs.s3a.fast.upload.buffer=disk # Use drive as the buffer for uploads
+fs.s3a.fast.upload=true # Turn on fast upload mode
+fs.s3a.max.total.tasks=2048 # Maximum number of parallel tasks
+fs.s3a.multipart.size=512M # Size of each multipart chunk
+fs.s3a.multipart.threshold=512M # Size before using multipart uploads
+fs.s3a.socket.recv.buffer=65536 # Read socket buffer hint
+fs.s3a.socket.send.buffer=65536 # Write socket buffer hint
+fs.s3a.threads.max=2048 # Maximum number of threads for S3A
+</pre></div>
+</div>
+<p>The rest of the other optimization options are discussed in the links below</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://hadoop.apache.org/docs/current/hadoop-aws/tools/hadoop-aws/index.html">https://hadoop.apache.org/docs/current/hadoop-aws/tools/hadoop-aws/index.html</a></p></li>
+<li><p><a class="reference external" href="https://hadoop.apache.org/docs/r3.1.1/hadoop-aws/tools/hadoop-aws/committers.html">https://hadoop.apache.org/docs/r3.1.1/hadoop-aws/tools/hadoop-aws/committers.html</a></p></li>
+</ul>
+<p>Once the config changes are applied, proceed to restart <strong>Hadoop</strong> services.</p>
+<p><img alt="hdfs-services" src="../_images/image7.png" /></p>
+</section>
+<section id="configure-spark2">
+<h3><strong>3.2 Configure Spark2</strong><a class="headerlink" href="#configure-spark2" title="Permalink to this heading"></a></h3>
+<p>Navigate to <strong>Services</strong> -&gt; <strong>Spark2</strong> -&gt; <strong>CONFIGS</strong> as shown below</p>
+<p><img alt="spark-config" src="../_images/image6.png" /></p>
+<p>Navigate to “<strong>Custom spark-defaults</strong>” to configure MinIO parameters for <code class="docutils literal notranslate"><span class="pre">_s3a_</span></code> connector</p>
+<p><img alt="spark-config" src="../_images/image9.png" /></p>
+<p>Add the following optimal entries for <em>spark-defaults.conf</em> to configure Spark with <strong>MinIO</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>spark.hadoop.fs.s3a.access.key minio
+spark.hadoop.fs.s3a.secret.key minio123
+spark.hadoop.fs.s3a.path.style.access true
+spark.hadoop.fs.s3a.block.size 512M
+spark.hadoop.fs.s3a.buffer.dir ${hadoop.tmp.dir}/s3a
+spark.hadoop.fs.s3a.committer.magic.enabled false
+spark.hadoop.fs.s3a.committer.name directory
+spark.hadoop.fs.s3a.committer.staging.abort.pending.uploads true
+spark.hadoop.fs.s3a.committer.staging.conflict-mode append
+spark.hadoop.fs.s3a.committer.staging.tmp.path /tmp/staging
+spark.hadoop.fs.s3a.committer.staging.unique-filenames true
+spark.hadoop.fs.s3a.committer.threads 2048 # number of threads writing to MinIO
+spark.hadoop.fs.s3a.connection.establish.timeout 5000
+spark.hadoop.fs.s3a.connection.maximum 8192 # maximum number of concurrent conns
+spark.hadoop.fs.s3a.connection.ssl.enabled false
+spark.hadoop.fs.s3a.connection.timeout 200000
+spark.hadoop.fs.s3a.endpoint http://minio:9000
+spark.hadoop.fs.s3a.fast.upload.active.blocks 2048 # number of parallel uploads
+spark.hadoop.fs.s3a.fast.upload.buffer disk # use disk as the buffer for uploads
+spark.hadoop.fs.s3a.fast.upload true # turn on fast upload mode
+spark.hadoop.fs.s3a.impl org.apache.hadoop.spark.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.s3a.max.total.tasks 2048 # maximum number of parallel tasks
+spark.hadoop.fs.s3a.multipart.size 512M # size of each multipart chunk
+spark.hadoop.fs.s3a.multipart.threshold 512M # size before using multipart uploads
+spark.hadoop.fs.s3a.socket.recv.buffer 65536 # read socket buffer hint
+spark.hadoop.fs.s3a.socket.send.buffer 65536 # write socket buffer hint
+spark.hadoop.fs.s3a.threads.max 2048 # maximum number of threads for S3A
+</pre></div>
+</div>
+<p>Once the config changes are applied, proceed to restart <strong>Spark</strong> services.</p>
+<p><img alt="spark-config" src="../_images/image12.png" /></p>
+</section>
+<section id="configure-hive">
+<h3><strong>3.3 Configure Hive</strong><a class="headerlink" href="#configure-hive" title="Permalink to this heading"></a></h3>
+<p>Navigate to <strong>Services</strong> -&gt; <strong>Hive</strong> -&gt; <strong>CONFIGS</strong>-&gt; <strong>ADVANCED</strong> as shown below</p>
+<p><img alt="hive-config" src="../_images/image10.png" /></p>
+<p>Navigate to “<strong>Custom hive-site</strong>” to configure MinIO parameters for <code class="docutils literal notranslate"><span class="pre">_s3a_</span></code> connector</p>
+<p><img alt="hive-config" src="../_images/image11.png" /></p>
+<p>Add the following optimal entries for <code class="docutils literal notranslate"><span class="pre">hive-site.xml</span></code> to configure Hive with <strong>MinIO</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hive</span><span class="o">.</span><span class="n">blobstore</span><span class="o">.</span><span class="n">use</span><span class="o">.</span><span class="n">blobstore</span><span class="o">.</span><span class="k">as</span><span class="o">.</span><span class="n">scratchdir</span><span class="o">=</span><span class="n">true</span>
+<span class="n">hive</span><span class="o">.</span><span class="n">exec</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">listing</span><span class="o">.</span><span class="n">max</span><span class="o">.</span><span class="n">threads</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">hive</span><span class="o">.</span><span class="n">load</span><span class="o">.</span><span class="n">dynamic</span><span class="o">.</span><span class="n">partitions</span><span class="o">.</span><span class="n">thread</span><span class="o">=</span><span class="mi">25</span>
+<span class="n">hive</span><span class="o">.</span><span class="n">metastore</span><span class="o">.</span><span class="n">fshandler</span><span class="o">.</span><span class="n">threads</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">hive</span><span class="o">.</span><span class="n">mv</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">threads</span><span class="o">=</span><span class="mi">40</span>
+<span class="n">mapreduce</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">fileinputformat</span><span class="o">.</span><span class="n">list</span><span class="o">-</span><span class="n">status</span><span class="o">.</span><span class="n">num</span><span class="o">-</span><span class="n">threads</span><span class="o">=</span><span class="mi">50</span>
+</pre></div>
+</div>
+<p>For more information about these options please visit <a class="reference external" href="https://www.cloudera.com/documentation/enterprise/5-11-x/topics/admin_hive_on_s3_tuning.html">https://www.cloudera.com/documentation/enterprise/5-11-x/topics/admin_hive_on_s3_tuning.html</a></p>
+<p><img alt="hive-config" src="../_images/image13.png" /></p>
+<p>Once the config changes are applied, proceed to restart all Hive services.</p>
+<p><img alt="hive-config" src="../_images/image14.png" /></p>
+</section>
+</section>
+<section id="run-sample-applications">
+<h2><strong>4. Run Sample Applications</strong><a class="headerlink" href="#run-sample-applications" title="Permalink to this heading"></a></h2>
+<p>After installing Hive, Hadoop and Spark successfully, we can now proceed to run some sample applications to see if they are configured appropriately.  We can use Spark Pi and Spark WordCount programs to validate our Spark installation. We can also explore how to run Spark jobs from the command line and Spark shell.</p>
+<section id="spark-pi">
+<h3><strong>4.1 Spark Pi</strong><a class="headerlink" href="#spark-pi" title="Permalink to this heading"></a></h3>
+<p>Test the Spark installation by running the following compute intensive example, which calculates pi by “throwing darts” at a circle. The program generates points in the unit square ((0,0) to (1,1)) and counts how many points fall within the unit circle within the square. The result approximates pi.</p>
+<p>Follow these steps to run the Spark Pi example:</p>
+<ul class="simple">
+<li><p>Login as user <strong>‘spark’</strong>.</p></li>
+<li><p>When the job runs, the library can now use <strong>MinIO</strong> during intermediate processing.</p></li>
+<li><p>Navigate to a node with the Spark client and access the spark2-client directory:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">hdp</span><span class="o">/</span><span class="n">current</span><span class="o">/</span><span class="n">spark2</span><span class="o">-</span><span class="n">client</span>
+<span class="n">su</span> <span class="n">spark</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Run the Apache Spark Pi job in yarn-client mode, using code from <strong>org.apache.spark</strong>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="n">submit</span> <span class="o">--</span><span class="k">class</span><span class="w"> </span><span class="nc">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">spark</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">SparkPi</span> \
+    <span class="o">--</span><span class="n">master</span> <span class="n">yarn</span><span class="o">-</span><span class="n">client</span> \
+    <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">executors</span> <span class="mi">1</span> \
+    <span class="o">--</span><span class="n">driver</span><span class="o">-</span><span class="n">memory</span> <span class="mi">512</span><span class="n">m</span> \
+    <span class="o">--</span><span class="n">executor</span><span class="o">-</span><span class="n">memory</span> <span class="mi">512</span><span class="n">m</span> \
+    <span class="o">--</span><span class="n">executor</span><span class="o">-</span><span class="n">cores</span> <span class="mi">1</span> \
+    <span class="n">examples</span><span class="o">/</span><span class="n">jars</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="n">examples</span><span class="o">*.</span><span class="n">jar</span> <span class="mi">10</span>
+</pre></div>
+</div>
+<p>The job should produce an output as shown below. Note the value of pi in the output.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">17</span><span class="o">/</span><span class="mi">03</span><span class="o">/</span><span class="mi">22</span> <span class="mi">23</span><span class="p">:</span><span class="mi">21</span><span class="p">:</span><span class="mi">10</span> <span class="n">INFO</span> <span class="n">DAGScheduler</span><span class="p">:</span> <span class="n">Job</span> <span class="mi">0</span> <span class="n">finished</span><span class="p">:</span> <span class="n">reduce</span> <span class="n">at</span> <span class="n">SparkPi</span><span class="o">.</span><span class="n">scala</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span> <span class="n">took</span> <span class="mf">1.302805</span> <span class="n">s</span>
+<span class="n">Pi</span> <span class="ow">is</span> <span class="n">roughly</span> <span class="mf">3.1445191445191445</span>
+</pre></div>
+</div>
+<p>Job status can also be viewed in a browser by navigating to the YARN ResourceManager Web UI and clicking on job history server information.</p>
+</section>
+<section id="wordcount">
+<h3><strong>4.2 WordCount</strong><a class="headerlink" href="#wordcount" title="Permalink to this heading"></a></h3>
+<p>WordCount is a simple program that counts how often a word occurs in a text file. The code builds a dataset of (String, Int) pairs called counts, and saves the dataset to a file.</p>
+<p>The following example submits WordCount code to the Scala shell. Select an input file for the Spark WordCount example. We can use any text file as input.</p>
+<ul class="simple">
+<li><p>Login as user <strong>‘spark’</strong>.</p></li>
+<li><p>When the job runs, the library can now use <strong>MinIO</strong> during intermediate processing.</p></li>
+<li><p>Navigate to a node with Spark client and access the spark2-client directory:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">hdp</span><span class="o">/</span><span class="n">current</span><span class="o">/</span><span class="n">spark2</span><span class="o">-</span><span class="n">client</span>
+<span class="n">su</span> <span class="n">spark</span>
+</pre></div>
+</div>
+<p>The following example uses <em>log4j.properties</em> as the input file:</p>
+<section id="upload-the-input-file-to-hdfs">
+<h4><strong>4.2.1 Upload the input file to HDFS:</strong><a class="headerlink" href="#upload-the-input-file-to-hdfs" title="Permalink to this heading"></a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hadoop</span> <span class="n">fs</span> <span class="o">-</span><span class="n">copyFromLocal</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hadoop</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">log4j</span><span class="o">.</span><span class="n">properties</span>
+          <span class="n">s3a</span><span class="p">:</span><span class="o">//</span><span class="n">testbucket</span><span class="o">/</span><span class="n">testdata</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-spark-shell">
+<h4><strong>4.2.2  Run the Spark shell:</strong><a class="headerlink" href="#run-the-spark-shell" title="Permalink to this heading"></a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="n">shell</span> <span class="o">--</span><span class="n">master</span> <span class="n">yarn</span><span class="o">-</span><span class="n">client</span> <span class="o">--</span><span class="n">driver</span><span class="o">-</span><span class="n">memory</span> <span class="mi">512</span><span class="n">m</span> <span class="o">--</span><span class="n">executor</span><span class="o">-</span><span class="n">memory</span> <span class="mi">512</span><span class="n">m</span>
+</pre></div>
+</div>
+<p>The command should produce an output as shown below. (with additional status messages):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Spark context Web UI available at http://172.26.236.247:4041
+Spark context available as &#39;sc&#39; (master = yarn, app id = application_1490217230866_0002).
+Spark session available as &#39;spark&#39;.
+Welcome to
+
+
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  &#39;_/
+   /___/ .__/\_,_/_/ /_/\_\   version 2.1.0.2.6.0.0-598
+      /_/
+
+Using Scala version 2.11.8 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_112)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala&gt;
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>At the <em>scala&gt;</em> prompt, submit the job by typing the following commands, Replace node names, file name, and file location with your values:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scala</span><span class="o">&gt;</span> <span class="n">val</span> <span class="n">file</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;s3a://testbucket/testdata&quot;</span><span class="p">)</span>
+<span class="n">file</span><span class="p">:</span> <span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">spark</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">RDD</span><span class="p">[</span><span class="n">String</span><span class="p">]</span> <span class="o">=</span> <span class="n">s3a</span><span class="p">:</span><span class="o">//</span><span class="n">testbucket</span><span class="o">/</span><span class="n">testdata</span> <span class="n">MapPartitionsRDD</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">at</span> <span class="n">textFile</span> <span class="n">at</span> <span class="o">&lt;</span><span class="n">console</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">24</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">val</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="n">line</span> <span class="o">=&gt;</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">word</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="n">_</span> <span class="o">+</span> <span class="n">_</span><span class="p">)</span>
+<span class="n">counts</span><span class="p">:</span> <span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">spark</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">RDD</span><span class="p">[(</span><span class="n">String</span><span class="p">,</span> <span class="n">Int</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ShuffledRDD</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="n">at</span> <span class="n">reduceByKey</span> <span class="n">at</span> <span class="o">&lt;</span><span class="n">console</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">25</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">counts</span><span class="o">.</span><span class="n">saveAsTextFile</span><span class="p">(</span><span class="s2">&quot;s3a://testbucket/wordcount&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use one of the following approaches to view job output:</p>
+<p>View output in the Scala shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scala</span><span class="o">&gt;</span> <span class="n">counts</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="mi">364</span>
+</pre></div>
+</div>
+<p>To view the output from MinIO exit the Scala shell. View WordCount job status:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hadoop</span> <span class="n">fs</span> <span class="o">-</span><span class="n">ls</span> <span class="n">s3a</span><span class="p">:</span><span class="o">//</span><span class="n">testbucket</span><span class="o">/</span><span class="n">wordcount</span>
+</pre></div>
+</div>
+<p>The output should be similar to the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Found</span> <span class="mi">3</span> <span class="n">items</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span>   <span class="mi">1</span> <span class="n">spark</span> <span class="n">spark</span>          <span class="mi">0</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">04</span> <span class="mi">01</span><span class="p">:</span><span class="mi">36</span> <span class="n">s3a</span><span class="p">:</span><span class="o">//</span><span class="n">testbucket</span><span class="o">/</span><span class="n">wordcount</span><span class="o">/</span><span class="n">_SUCCESS</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span>   <span class="mi">1</span> <span class="n">spark</span> <span class="n">spark</span>       <span class="mi">4956</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">04</span> <span class="mi">01</span><span class="p">:</span><span class="mi">36</span> <span class="n">s3a</span><span class="p">:</span><span class="o">//</span><span class="n">testbucket</span><span class="o">/</span><span class="n">wordcount</span><span class="o">/</span><span class="n">part</span><span class="o">-</span><span class="mi">00000</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span>   <span class="mi">1</span> <span class="n">spark</span> <span class="n">spark</span>       <span class="mi">5616</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">04</span> <span class="mi">01</span><span class="p">:</span><span class="mi">36</span> <span class="n">s3a</span><span class="p">:</span><span class="o">//</span><span class="n">testbucket</span><span class="o">/</span><span class="n">wordcount</span><span class="o">/</span><span class="n">part</span><span class="o">-</span><span class="mi">00001</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

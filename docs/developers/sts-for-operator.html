@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Security Token Service (STS) for MinIO Operator &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../_static/js/main.js"></script>
+    <script defer="defer" src="../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/developers/sts-for-operator.html" />
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transforms with Object Lambda" href="transforms-with-object-lambda.html" />
+    <link rel="prev" title="AssumeRoleWithWebIdentity" href="security-token-service/AssumeRoleWithWebIdentity.html" /><meta name="pagename" content="developers/sts-for-operator"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../operations/deployments/installation.html">Installation and Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/batch-framework.html">Batch Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="security-token-service.html">Security Token Service (STS)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="security-token-service/AssumeRoleWithCustomToken.html"><code class="docutils literal notranslate"><span class="pre">AssumeRoleWithCustomToken</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-token-service/AssumeRoleWithLDAPIdentity.html"><code class="docutils literal notranslate"><span class="pre">AssumeRoleWithLDAPIdentity</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-token-service/AssumeRoleWithWebIdentity.html"><code class="docutils literal notranslate"><span class="pre">AssumeRoleWithWebIdentity</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Security Token Service (STS) for MinIO Operator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/kubernetes.html">Kubernetes Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/integrations.html">Integrations</a></li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="security-token-service-sts-for-minio-operator">
+<span id="minio-sts-operator"></span><h1>Security Token Service (STS) for MinIO Operator<a class="headerlink" href="#security-token-service-sts-for-minio-operator" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
+<li><p><a class="reference internal" href="#how-sts-authorization-works-in-kubernetes" id="id2">How STS Authorization Works in Kubernetes</a></p></li>
+<li><p><a class="reference internal" href="#requirements" id="id3">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#procedure" id="id4">Procedure</a></p></li>
+<li><p><a class="reference internal" href="#example-resources" id="id5">Example Resources</a></p>
+<ul>
+<li><p><a class="reference internal" href="#service-account" id="id6">Service Account</a></p></li>
+<li><p><a class="reference internal" href="#policy-binding" id="id7">Policy Binding</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#reference" id="id8">Reference</a></p></li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version Operator: </span>v5.0.0</p>
+<p>The MinIO Operator supports a set of API calls that allows an application to obtain STS credentials for a MinIO Tenant.</p>
+</div>
+<p>Benefits of STS for MinIO Operator include:</p>
+<ul>
+<li><p><a class="reference internal" href="security-token-service.html#minio-security-token-service"><span class="std std-ref">STS credentials</span></a> allow an application to access objects on a MinIO Tenant without the need to create credentials for the application on the tenant.</p></li>
+<li><p>Allows applications to access objects in MinIO tenants using a Kubernetes-native authentication mechanism.</p>
+<p>Service Accounts or Service Account Tokens are a core concept of <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Role-Based Access Control (RBAC)</a> <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#service-account-tokens">authentication</a> in Kubernetes.</p>
+</li>
+<li><p>Implementing STS for MinIO Operator allows you to utilize infrastructure as code principles and configuration by using the tenant custom resource definition (CRD) and a MinIO PolicyBinding CRD.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Starting with Operator v5.0.11, STS is <em>enabled</em> by default.</p>
+<p>Previous versions of the Operator start with STS <em>disabled</em> by default.
+To use STS with v5.0.10 or older versions of the Operator, you must first explicitly enable it.</p>
+<p>The procedure on this page includes instructions to enable the STS API in the MinIO Operator.</p>
+</div>
+</section>
+<section id="how-sts-authorization-works-in-kubernetes">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">How STS Authorization Works in Kubernetes</a><a class="headerlink" href="#how-sts-authorization-works-in-kubernetes" title="Permalink to this heading"></a></h2>
+<p>An application can use an <code class="docutils literal notranslate"><span class="pre">AssumeRoleWithWebIdentity</span></code> call including a <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/">Kubernetes Service Account’s</a> <abbr title="JSON Web Token">JWT</abbr> to send a request for temporary credentials to the MinIO Operator.
+When linked to a pod, such as through a deployment’s <code class="docutils literal notranslate"><span class="pre">.spec.spec.serviceAccountName</span></code> field, Kubernetes mounts a <abbr title="JSON Web Token">JWT</abbr> for the service account from a well-known location, such as <code class="docutils literal notranslate"><span class="pre">/var/run/secrets/kubernetes.io/serviceaccount/token</span></code>.
+The Pod can access those service accounts from that location.</p>
+<p>The Operator checks the validity of the request, retrieves policies for the application, obtains credentials from the tenant, and then passes the credentials back the application.
+The application uses the issued credentials to work with the object storage on the tenant.</p>
+<a class=""
+               data-lightbox="group-13e2c403-6795-474c-adbf-6f2d863468e6"
+               href="../_images/sts-diagram1.png"
+               title=""
+               data-title=""
+               
+               ><img src="../_images/sts-diagram1.png"
+                     class="align-center"
+                     width="600px"
+                     height="auto"
+                     alt="A diagram showing STS token process flow on a Kubernetes MinIO deployment between the requesting application, MinIO Operator, Kubernetes API, PolicyBinding custom resource definition, and the MinIO tenant."/>
+                </a><p>The complete process includes the following steps:</p>
+<ol class="arabic simple">
+<li><p>An application sends an <code class="docutils literal notranslate"><span class="pre">AssumeRoleWithWebidentity</span></code> <a class="reference internal" href="security-token-service/AssumeRoleWithWebIdentity.html#minio-sts-assumerolewithwebidentity"><span class="std std-ref">API request</span></a> to the MinIO Operator containing the tenant namespace and a service account to use.</p></li>
+<li><p>The MinIO Operator uses the Kubernetes API to check that the JSON Web Token (JWT) associated with the <a class="reference internal" href="#minio-operator-sts-service-account"><span class="std std-ref">service account</span></a> in the application’s request is valid.</p></li>
+<li><p>The Kubernetes API returns the results of its validity check.</p></li>
+<li><p>The MinIO Operator checks for <a class="reference internal" href="#minio-operator-sts-policy-binding"><span class="std std-ref">Policy Bindings</span></a> that matches the application.</p></li>
+<li><p>The PolicyBinding CRD returns the policy or policies that match the request, if any.</p></li>
+<li><p>The MinIO Operator sends the combined policy information for the application to the MinIO Tenant.</p></li>
+<li><p>The tenant creates temporary credentials matching the policy or policies for the request and returns those to the MinIO Operator.</p></li>
+<li><p>The MinIO Operator forwards the temporary credentials back to the application.</p></li>
+<li><p>The application uses the credentials to send the object storage calls to the MinIO tenant.</p></li>
+</ol>
+</section>
+<section id="requirements">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>STS for the MinIO Operator requires the following:</p>
+<ul class="simple">
+<li><p>MinIO Operator v5.0.0 or later.</p></li>
+<li><p>The deployment <strong>must</strong> have <a class="reference internal" href="../operations/network-encryption.html#minio-tls"><span class="std std-ref">TLS configured</span></a>.</p></li>
+<li><p>(Required for Operator v5.0.0 - 5.0.10) <a class="reference internal" href="../reference/operator-environment-variables.html#envvar.OPERATOR_STS_ENABLED" title="envvar.OPERATOR_STS_ENABLED"><code class="xref minio minio-envvar docutils literal notranslate"><span class="pre">OPERATOR_STS_ENABLED</span></code></a> environment variable set to <code class="docutils literal notranslate"><span class="pre">on</span></code>.</p></li>
+</ul>
+</section>
+<section id="procedure">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Procedure</a><a class="headerlink" href="#procedure" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Enable STS functionality for the deployment</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This step is optional for Operator version 5.0.11 or later.</p>
+</div>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>-n<span class="w"> </span>minio-operator<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deployment/minio-operator<span class="w"> </span><span class="nv">OPERATOR_STS_ENABLED</span><span class="o">=</span>on
+</pre></div>
+</div>
+<ul>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">minio-operator</span></code> with the namespace for your deployment.</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">deployment/minio-operator</span></code> with the value for your deployment’s MinIO Operator.</p>
+<p>You can find the deployment value by running <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span> <span class="pre">deployments</span> <span class="pre">-n</span> <span class="pre">&lt;namespace&gt;</span></code>, where you replace <code class="docutils literal notranslate"><span class="pre">&lt;namespace&gt;</span></code> with the namespace for the MinIO Operator.
+Your MinIO Operator namespace is typically <code class="docutils literal notranslate"><span class="pre">minio-operator</span></code>, though this value can change during install.</p>
+</li>
+</ul>
+</li>
+<li><p>Ensure an appropriate <a class="reference internal" href="../administration/identity-access-management/policy-based-access-control.html#minio-policy"><span class="std std-ref">policy</span></a> or policies exist on the MinIO Tenant for the application to use for the application</p>
+<p>The next step uses a YAML document to map one or more existing tenant policies to a service account through a custom resource called a <code class="docutils literal notranslate"><span class="pre">PolicyBinding</span></code>.</p>
+</li>
+<li><p>Create YAML resources for the Service Account and Policy Binding:</p>
+<ul>
+<li><p>Create the <a class="reference internal" href="#minio-operator-sts-service-account"><span class="std std-ref">Service Account</span></a> in the MinIO Tenant for the application to use.</p>
+<p>For more on service accounts in Kubernetes, see the <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/">Kubernetes documentation</a>.</p>
+</li>
+<li><p>Create a <a class="reference internal" href="#minio-operator-sts-policy-binding"><span class="std std-ref">Policy Binding</span></a> in the target tenant’s namespace that links the application to one or more of the MinIO Tenant’s policies.</p></li>
+</ul>
+</li>
+<li><p>Apply the YAML file to create the resources on the deployment</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>path/to/yaml/file.yaml
+</pre></div>
+</div>
+</li>
+<li><p>Use an SDK that supports the <code class="docutils literal notranslate"><span class="pre">AssumeRoleWithWebIdentity</span></code> like behavior to send a call from your application to the deployment</p>
+<p>The STS API expects a JWT for the service account to exist in the Kubernetes environment.
+When linked to a pod, such as through a deployment’s <code class="docutils literal notranslate"><span class="pre">.spec.spec.serviceAccountName</span></code> field, Kubernetes mounts a <abbr title="JSON Web Token">JWT</abbr> for the service account from a well-known location, such as <code class="docutils literal notranslate"><span class="pre">/var/run/secrets/kubernetes.io/serviceaccount/token</span></code>.</p>
+<p>Alternatively, you can define the token path as an environment variable:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nv">AWS_WEB_IDENTITY_TOKEN_FILE</span><span class="o">=</span>/var/run/secrets/kubernetes.io/serviceaccount/token
+</pre></div>
+</div>
+<p>The following MinIO SDKs support <code class="docutils literal notranslate"><span class="pre">AssumeRoleRoleWithWebIdentity</span></code>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="minio-drivers.html#go-sdk"><span class="std std-ref">Golang</span></a></p></li>
+<li><p><a class="reference internal" href="minio-drivers.html#java-sdk"><span class="std std-ref">Java</span></a></p></li>
+<li><p><a class="reference internal" href="minio-drivers.html#javascript-sdk"><span class="std std-ref">JavaScript</span></a></p></li>
+<li><p><a class="reference internal" href="minio-drivers.html#dotnet-sdk"><span class="std std-ref">.NET</span></a></p></li>
+<li><p><a class="reference internal" href="minio-drivers.html#python-sdk"><span class="std std-ref">Python</span></a></p></li>
+</ul>
+<p>For examples of using the SDKs to assume a role, see <a class="reference external" href="https://github.com/minio/operator/tree/master/examples/kustomization/sts-example/sample-clients">GitHub</a>.</p>
+</li>
+</ol>
+</section>
+<section id="example-resources">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Example Resources</a><a class="headerlink" href="#example-resources" title="Permalink to this heading"></a></h2>
+<section id="service-account">
+<span id="minio-operator-sts-service-account"></span><h3><a class="toc-backref" href="#id6" role="doc-backlink">Service Account</a><a class="headerlink" href="#service-account" title="Permalink to this heading"></a></h3>
+<p>A Service Account is a <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/">Kubernetes resource type</a> that allows an external application to interact with the Kubernetes deployment.
+When linked to a pod, such as through a deployment’s <code class="docutils literal notranslate"><span class="pre">.spec.spec.serviceAccountName</span></code> field, Kubernetes mounts a <abbr title="JSON Web Token">JWT</abbr> for the service account from a well-known location, such as <code class="docutils literal notranslate"><span class="pre">/var/run/secrets/kubernetes.io/serviceaccount/token</span></code>.</p>
+<p>The following yaml creates a service account called <code class="docutils literal notranslate"><span class="pre">stsclient-sa</span></code> for the <code class="docutils literal notranslate"><span class="pre">sts-client</span></code> namespace.</p>
+<div class="copyable highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts-client</span><span class="w"> </span><span class="c1"># The namespace to add the service account to. Usually a tenant, but can be any namespace in the deployment.</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stsclient-sa</span><span class="w"> </span><span class="c1"># The name to use for the service account.</span>
+</pre></div>
+</div>
+</section>
+<section id="policy-binding">
+<span id="minio-operator-sts-policy-binding"></span><h3><a class="toc-backref" href="#id7" role="doc-backlink">Policy Binding</a><a class="headerlink" href="#policy-binding" title="Permalink to this heading"></a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">PolicyBinding</span></code> is a MinIO-specific custom resource type for Kubernetes that links an <code class="docutils literal notranslate"><span class="pre">application</span></code> to a set of policies.</p>
+<p>Create Policy Bindings in the namespace of the tenant they are for.</p>
+<p>For the purposes of the MinIO Operator, an application is any requesting resource that identifies with a specific service account and tenant namespace.
+The <code class="docutils literal notranslate"><span class="pre">PolicyBinding</span></code> resource links the application to one or more policies for the tenant on that namespace.</p>
+<p>The below yaml creates a <code class="docutils literal notranslate"><span class="pre">PolicyBinding</span></code> that links an application using the service account <code class="docutils literal notranslate"><span class="pre">stsclient-sa</span></code> that exists in the namespace <code class="docutils literal notranslate"><span class="pre">sts-client</span></code> to the policy <code class="docutils literal notranslate"><span class="pre">test-bucket-rw</span></code> in the target tenant located in the namespace <code class="docutils literal notranslate"><span class="pre">minio-tenant-1</span></code>.
+The policies granted in the yaml definition <strong>must</strong> already exist on the MinIO Tenant.</p>
+<div class="copyable highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts.min.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PolicyBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">binding-1</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio-tenant-1</span><span class="w"> </span><span class="c1"># The namespace of the tenant this binding is for</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">application</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts-client</span><span class="w"> </span><span class="c1"># The namespace that contains the service account for the application</span>
+<span class="w">    </span><span class="nt">serviceaccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stsclient-sa</span><span class="w"> </span><span class="c1"># The service account to use for the application</span>
+<span class="w">  </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-bucket-rw</span><span class="w"> </span><span class="c1"># A policy that already exists in the tenant</span>
+<span class="w">    </span><span class="c1"># - test-bucket-policy-2 # Add as many policies as needed</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reference">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Reference</a><a class="headerlink" href="#reference" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/minio/operator/tree/master/examples/kustomization/sts-example/sample-clients">STS Examples by SDK</a></p></li>
+<li><p><a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/">Kubernetes documentation on Service Accounts</a></p></li>
+<li><p><a class="reference external" href="https://github.com/minio/operator/blob/master/docs/policybinding_crd.adoc">MinIO STS API</a></p></li>
+</ul>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

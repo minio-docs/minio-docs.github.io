@@ -1,0 +1,384 @@
+// ----------------------
+// Custom scrollbar
+// ----------------------
+.scrollbar {
+  scrollbar-width: thin;
+  
+  &:not(.scrollbar--hover) {
+    scrollbar-color: var(--scrollbar-bg) transparent;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-bg);
+    }
+  } 
+
+  &:hover {
+    scrollbar-color: var(--scrollbar-hover-bg) transparent;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-bg);
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    border-radius: 1rem;
+    border: 3px solid transparent;
+    background-clip: content-box;
+
+    &:hover {
+      background-color: var(--scrollbar-hover-bg);
+    }
+  }
+}
+
+.scrollbar--hover {
+  scrollbar-color: transparent transparent;
+}
+
+
+// ----------------------
+// Buttons icons
+// ----------------------
+.icon {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 0;
+  flex-shrink: 0;
+  padding: 0 0.3rem;
+
+  &:not(.icon--switch) {
+    & > svg {
+      fill: var(--text-muted-color);
+    }
+
+    &:hover {
+      background-color: var(--theme-light-bg);
+    }
+  }
+}
+
+.icon--switch {
+  display: grid;
+  place-items: center;
+  position: relative;
+
+  & > img,
+  & > svg {
+    transform: scale(1);
+    opacity: 1;
+    position: absolute;
+
+    &:last-child:not(:only-child) {
+      opacity: 0;
+    }
+  }
+
+  &.active {
+    & > svg,
+    & > img {
+      &:first-child {
+        opacity: 0;
+      }
+
+      &:last-child {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+
+// ----------------------
+// Cookie banner
+// ----------------------
+#cookie {
+  background-color: #E0EDF3;
+  padding: 0.5rem 0;
+  color: $black;
+  font-size: 0.75rem;
+  z-index: 10;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  &:not(.show) {
+    display: none;
+  }
+
+  strong {
+    font-weight: $font-weight-medium;
+    margin-right: 0.2rem;
+  }
+
+  a {
+    color: #006DA0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  & > .container {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.cookie__text {
+  flex: 1;
+}
+
+#cookie__btn {
+  background-color: #101D32;
+  border-radius: $border-radius;
+  display: inline-block;
+  color: $white;
+  padding: 0 0.75rem 0.1rem;
+  line-height: 1;
+  cursor: pointer;
+  height: 1.65rem;
+  border: 0;
+  flex-shrink: 0;
+  margin-left: 1rem;
+
+  &:hover {
+    background-color: #050a13;
+  }
+}
+
+
+// -----------------------------
+// Read mode utility classes
+// -----------------------------
+:root {
+  &:not(.read-mode) {
+    .visible-rm {
+      display: none;
+    }
+  }
+
+  &:not(.dark-mode) {
+    .hidden-lm {
+      display: none;
+    }
+  }
+
+  &.dark-mode {
+    .hidden-dm {
+      display: none;
+    }
+  }
+
+  &.read-mode {
+    .hidden-rm {
+      display: none;
+    }
+  }
+}
+
+
+// ----------------------
+// SD cards
+// ----------------------
+.sd-container-fluid {
+  --sd-gutter-x: 0;
+}
+
+.sd-card {
+  --sd-color-shadow: none;
+  --sd-color-card-border: var(--theme-light-bg);
+  --sd-color-card-border-hover: var(--theme-light-hover-bg);
+}
+
+.sd-card-hover {
+  &:hover {
+    transform: scale(1);
+  }
+}
+
+.sd-card-body {
+  padding: 1.35rem;
+
+  img {
+    border: 0;
+  }
+}
+
+.sd-card-title {
+  margin-bottom: 1rem;
+  color: var(--headings-color);
+}
+
+[data-lightbox] img {
+  margin-bottom: 1rem;
+}
+
+// -----------------------------
+// Copy button
+// -----------------------------
+button.copybtn {
+  border-radius: $border-radius;
+  top: 0.1;
+  right: 0rem;
+  border: 0;
+  background-color: transparent;
+  width: auto;
+  font-family: $font-family-base;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+
+  &:hover {
+    background-color: transparent !important;
+
+    &:after {
+      opacity: 1;
+    }
+  }
+
+  & > img {
+    display: none;
+  }
+
+  &:after {
+    all: revert;
+    transform: none !important;
+    transition-delay: 0ms !important;
+    transition: opacity 300ms;
+    opacity: 0.75;
+    content: "Copy";
+  }
+
+  &.success {
+    &:after {
+      content: "Copied";
+    }
+  }
+}
+
+// -----------------------------
+// Carousel
+// -----------------------------
+.sd-cards-carousel {
+  border-radius: $border-radius;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+
+  @include hide-scrollbars();
+
+  &.sd-card-cols-1 {
+    & > .sd-card {
+      width: 100%;
+    }
+  }
+
+  &.sd-card-cols-2 {
+    & > .sd-card {
+      width: 50%;
+    }
+  }
+
+  &.sd-card-cols-3 {
+    & > .sd-card {
+      width: 33.333%;
+    }
+  }
+
+  &[class*=sd-card-cols] > .sd-card {
+    --sd-color-card-border: none
+    border-radius: 0;
+    margin: 0;
+    padding: 0.25rem;
+
+    .sd-card-body {
+      border: 1px solid var(--table-border-color);
+      border-radius: $border-radius;
+    }
+  }
+}
+
+.carousel-wrapper {
+  position: relative;
+}
+
+.carousel-arrow {
+  background-color: var(--body-bg);
+  border: 1px solid var(--table-border-color);
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  transition: background-color 300ms, opacity 200ms;
+  color: var(--headings-color);
+
+  &:hover {
+    background-color: var(--content-nav-bg);
+  }
+
+  &.inactive {
+    opacity: 0;
+  }
+
+  &.carousel-arrow--left {
+    left: -1rem;
+  }
+
+  &.carousel-arrow--right {
+    right: -1rem;
+    transform: rotate(180deg) translateY(50%);
+  }
+}
+
+// ----------------------------------
+// Cleaning up captions for figures
+// ----------------------------------
+
+figure {
+   box-shadow: 0px 0px 10px 5px lightgrey;
+   margin-bottom: 2.5rem;
+}
+
+figcaption {
+
+   border-top: lightgrey solid 1px;
+
+   & span.caption-text {
+      font-size: small;
+      font-weight: bold;
+   }
+}
+
+// --------------------------------------
+// Improving readability of ordered lists
+// --------------------------------------
+
+div.procedure ol.arabic li > p:first-child {
+   font-weight: bold;
+}
+
+div.procedure ol.arabic li ul.simple li p {
+   font-weight: normal; // stupid hack, not sure how else to fix this
+}

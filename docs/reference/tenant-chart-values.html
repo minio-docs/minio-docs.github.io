@@ -1,0 +1,1065 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Tenant Helm Charts &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../_static/js/main.js"></script>
+    <script defer="defer" src="../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/reference/tenant-chart-values.html" />
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Baremetal Reference" href="baremetal.html" />
+    <link rel="prev" title="Operator Helm Charts" href="operator-chart-values.html" /><meta name="pagename" content="reference/tenant-chart-values"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../operations/deployments/installation.html">Installation and Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operations/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/batch-framework.html">Batch Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../administration/concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/security-token-service.html">Security Token Service (STS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developers/file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="kubernetes.html">Kubernetes Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="operator-crd.html">MinIO Custom Resource Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator-environment-variables.html">MinIO Operator Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator-chart-values.html">Operator Helm Charts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tenant Helm Charts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/integrations.html">Integrations</a></li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="tenant-helm-charts">
+<span id="minio-tenant-chart-values"></span><h1>Tenant Helm Charts<a class="headerlink" href="#tenant-helm-charts" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#minio-tenant-chart" id="id1">MinIO Tenant Chart</a></p></li>
+</ul>
+</nav>
+<p>MinIO publishes <a class="reference external" href="https://github.com/minio/operator/tree/v5.0.18/helm">Helm Charts</a> for the <a class="reference external" href="https://github.com/minio/operator/blob/v5.0.18/helm/operator">Helm Operator Charts</a> and <a class="reference external" href="https://github.com/minio/operator/tree/v5.0.18/helm/tenant">Helm Tenant Charts</a>.
+You can use these charts to deploy the MinIO Operator and managed Tenants through Helm.</p>
+<p>The following page documents the <code class="docutils literal notranslate"><span class="pre">values.yaml</span></code> chart for a MinIO Tenant.
+For documentation on the chart for a MinIO Operator, see <a class="reference internal" href="operator-chart-values.html#minio-operator-chart-values"><span class="std std-ref">Operator Helm Charts</span></a></p>
+<section id="minio-tenant-chart">
+<span id="minio-tenant-chart-operator-values"></span><h2><a class="toc-backref" href="#id1" role="doc-backlink">MinIO Tenant Chart</a><a class="headerlink" href="#minio-tenant-chart" title="Permalink to this heading"></a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+Reference</label><div class="sd-tab-content docutils">
+<dl>
+<dt>tenant</dt><dd><dl>
+<dt>name</dt><dd><p>The Tenant name</p>
+<p>Change this to match your preferred MinIO Tenant name.</p>
+</dd>
+<dt>image</dt><dd><p>Specify the Operator container image to use for the deployment.
+<code class="docutils literal notranslate"><span class="pre">image.tag</span></code> 
+For example, the following sets the image to the <code class="docutils literal notranslate"><span class="pre">quay.io/minio/operator</span></code> repo and the v7.0.0 tag.
+The container pulls the image if not already present:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">image</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">quay.io/minio/minio</span>
+<span class="w">   </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RELEASE.2024-11-07T00-52-20Z</span>
+<span class="w">   </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+</pre></div>
+</div>
+<p>The chart also supports specifying an image based on digest value:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">image</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">quay.io/minio/minio@sha256</span>
+<span class="w">   </span><span class="nt">digest</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">28c80b379c75242c6fe793dfbf212f43c602140a0de5ebe3d9c2a3a7b9f9f983</span>
+<span class="w">   </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+</pre></div>
+</div>
+</dd>
+<dt>imagePullSecret</dt><dd><p>An array of Kubernetes secrets to use for pulling images from a private <code class="docutils literal notranslate"><span class="pre">image.repository</span></code>.
+Only one array element is supported at this time.</p>
+</dd>
+<dt>initContainers</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to perform setup or configuration tasks before the main Tenant pods starts.</p>
+<p>Example of init container which waits for idenity provider to be reachable before starting MinIO Tenant:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">initContainers</span><span class="p">:</span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wait-for-idp</span>
+<span class="w">   </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">   </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-c</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">       </span><span class="no">URL=&quot;https://idp-url&quot;</span>
+<span class="w">       </span><span class="no">echo &quot;Checking IdP reachability (${URL})&quot;</span>
+<span class="w">       </span><span class="no">until $(wget -q -O &quot;/dev/null&quot; ${URL}) ; do</span>
+<span class="w">         </span><span class="no">echo &quot;IdP (${URL}) not reachable. Waiting to be reachable...&quot;</span>
+<span class="w">         </span><span class="no">sleep 5</span>
+<span class="w">       </span><span class="no">done</span>
+<span class="w">       </span><span class="no">echo &quot;IdP (${URL}) reachable. Starting MinIO...&quot;</span>
+</pre></div>
+</div>
+</dd>
+<dt>scheduler</dt><dd><p>The Kubernetes <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/">Scheduler</a> to use for dispatching Tenant pods.</p>
+<p>Specify an empty dictionary <code class="docutils literal notranslate"><span class="pre">{}</span></code> to dispatch pods with the default scheduler.</p>
+</dd>
+<dt>configuration</dt><dd><p>The Kubernetes secret name that contains MinIO environment variable configurations.
+The secret is expected to have a key named config.env containing environment variables exports.</p>
+</dd>
+<dt>configSecret</dt><dd><p>Root key for dynamically creating a secret for use with configuring root MinIO User
+Specify the <code class="docutils literal notranslate"><span class="pre">name</span></code> and then a list of environment variables.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Do not use this in production environments.
+This field is intended for use with rapid development or testing only.</p>
+</div>
+<p>For example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myminio-env-configuration</span>
+<span class="nt">accessKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">secretKey</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio123</span>
+</pre></div>
+</div>
+</dd>
+<dt>poolsMetadata</dt><dd><dl class="simple">
+<p>Metadata that will be added to the statefulset and pods of all pools</p>
+<dt>annotations</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/">annotations</a> to associate to Tenant pods.</p>
+</dd>
+<dt>labels</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">labels</a> to associate to Tenant pods.</p>
+</dd>
+</dl>
+</dd>
+<dt>pools</dt><dd><dl>
+<p>Top level key for configuring MinIO Pool(s) in this Tenant.</p>
+<p>See <a class="reference external" href="https://docs.min.io/community/minio-object-store/reference/operator-crd.html#pool">Operator CRD: Pools</a> for more information on all subfields.</p>
+<dt>servers</dt><dd><p>The number of MinIO Tenant Pods / Servers in this pool.
+For standalone mode, supply 1. For distributed mode, supply 4 or more.
+Note that the operator does not support upgrading from standalone to distributed mode.</p>
+</dd>
+<dt>name</dt><dd><p>Custom name for the pool</p>
+</dd>
+<dt>volumesPerServer</dt><dd><p>The number of volumes attached per MinIO Tenant Pod / Server.</p>
+</dd>
+<dt>size</dt><dd><p>The capacity per volume requested per MinIO Tenant Pod.</p>
+</dd>
+<dt>storageAnnotations</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/">storageAnnotations</a> to associate to PVCs.</p>
+</dd>
+<dt>storageLabels</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">storageLabels</a> to associate to PVCs.</p>
+</dd>
+<dt>annotations</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/">annotations</a> to associate to Tenant pods.</p>
+</dd>
+<dt>labels</dt><dd><p>Specify <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">labels</a> to associate to Tenant pods.</p>
+</dd>
+<dt>tolerations</dt><dd><p>An array of <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/">Toleration labels</a> to associate to Tenant pods.</p>
+<p>These settings determine the distribution of pods across worker nodes.</p>
+</dd>
+<dt>nodeSelector</dt><dd><p>Any <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/">Node Selectors</a> to apply to Tenant pods.</p>
+<p>The Kubernetes scheduler uses these selectors to determine which worker nodes onto which it can deploy Tenant pods.</p>
+<p>If no worker nodes match the specified selectors, the Tenant deployment will fail.</p>
+</dd>
+<dt>affinity</dt><dd><p>The <a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/">affinity</a> or anti-affinity settings to apply to Tenant pods.</p>
+<p>These settings determine the distribution of pods across worker nodes and can help prevent or allow colocating pods onto the same worker nodes.</p>
+</dd>
+<dt>resources</dt><dd><p>The <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/">Requests or Limits</a> for resources to associate to Tenant pods.</p>
+<p>These settings can control the minimum and maximum resources requested for each pod.
+If no worker nodes can meet the specified requests, the Operator may fail to deploy.</p>
+</dd>
+<dt>securityContext</dt><dd><p>The Kubernetes <a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">SecurityContext</a> to use for deploying Tenant resources.</p>
+<p>You may need to modify these values to meet your cluster’s security and access settings.</p>
+<p>We recommend disabling recursive permission changes by setting <code class="docutils literal notranslate"><span class="pre">fsGroupChangePolicy</span></code> to <code class="docutils literal notranslate"><span class="pre">OnRootMismatch</span></code> as those operations can be expensive for certain workloads (e.g. large volumes with many small files).</p>
+</dd>
+<dt>containerSecurityContext</dt><dd><p>The Kubernetes <a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">SecurityContext</a> to use for deploying Tenant containers.
+You may need to modify these values to meet your cluster’s security and access settings.</p>
+</dd>
+<dt>topologySpreadConstraints</dt><dd><p>An array of <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/">Topology Spread Constraints</a> to associate to Operator Console pods.</p>
+<p>These settings determine the distribution of pods across worker nodes.</p>
+</dd>
+</dl>
+</dd>
+<dt>mountPath</dt><dd><p>The mount path where Persistent Volumes are mounted inside Tenant container(s).</p>
+</dd>
+<dt>subPath</dt><dd><p>The Sub path inside Mount path where MinIO stores data.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Treat the <code class="docutils literal notranslate"><span class="pre">mountPath</span></code> and <code class="docutils literal notranslate"><span class="pre">subPath</span></code> values as immutable once you deploy the Tenant.
+If you change these values post-deployment, then you may have different paths for new and pre-existing data.
+This can vastly increase operational complexity and may result in unpredictable data states.</p>
+</div>
+</dd>
+<dt>metrics</dt><dd><p>Configures a Prometheus-compatible scraping endpoint at the specified port.</p>
+</dd>
+<dt>certificate</dt><dd><dl>
+<p>Configures external certificate settings for the Tenant.</p>
+<dt>externalCaCertSecret</dt><dd><p>Specify an array of Kubernetes TLS secrets, where each entry corresponds to a secret the TLS private key and public certificate pair.</p>
+<p>This is used by MinIO to verify TLS connections from clients using those CAs
+If you omit this and have clients using TLS certificates minted by an external CA, those connections may fail with warnings around certificate verification.
+See <a class="reference external" href="https://docs.min.io/community/minio-object-store/reference/operator-crd.html#tenantspec">Operator CRD: TenantSpec</a>.</p>
+</dd>
+<dt>externalCertSecret</dt><dd><p>Specify an array of Kubernetes secrets, where each entry corresponds to a secret contains the TLS private key and public certificate pair.</p>
+<p>Omit this to use only the MinIO Operator autogenerated certificates.</p>
+<p>If you omit this field <em>and</em> set <code class="docutils literal notranslate"><span class="pre">requestAutoCert</span></code> to false, the Tenant starts without TLS.</p>
+<p>See <a class="reference external" href="https://docs.min.io/community/minio-object-store/reference/operator-crd.html#tenantspec">Operator CRD: TenantSpec</a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The MinIO Operator may output TLS connectivity errors if it cannot trust the Certificate Authority (CA) which minted the custom certificates.</p>
+<p>You can pass the CA to the Operator to allow it to trust that cert.
+See <a class="reference external" href="https://docs.min.io/community/minio-object-store/operations/network-encryption.html#self-signed-internal-private-certificates-and-public-cas-with-intermediate-certificates">Self-Signed, Internal, and Private Certificates</a> for more information.
+This step may also be necessary for globally trusted CAs where you must provide intermediate certificates to the Operator to help build the full chain of trust.</p>
+</div>
+</dd>
+<dt>requestAutoCert</dt><dd><p>Enable automatic Kubernetes based <a class="reference external" href="https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster">certificate generation and signing</a></p>
+</dd>
+<dt>certConfig</dt><dd><p>This field is used only when <code class="docutils literal notranslate"><span class="pre">requestAutoCert:</span> <span class="pre">true</span></code>.
+Use this field to set CommonName for the auto-generated certificate. 
+MinIO defaults to using the internal Kubernetes DNS name for the pod
+The default DNS name format is typically <code class="docutils literal notranslate"><span class="pre">*.minio.default.svc.cluster.local</span></code>.</p>
+<p>See <a class="reference external" href="https://docs.min.io/community/minio-object-store/reference/operator-crd.html#certificateconfig">Operator CRD: CertificateConfig</a></p>
+</dd>
+</dl>
+</dd>
+<dt>features</dt><dd><p>MinIO features to enable or disable in the MinIO Tenant
+See <a class="reference external" href="https://docs.min.io/community/minio-object-store/reference/operator-crd.html#features">Operator CRD: Features</a>.</p>
+</dd>
+<dt>buckets</dt><dd><p>Array of objects describing one or more buckets to create during tenant provisioning.
+Example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-minio-bucket</span>
+<span class="w">  </span><span class="nt">objectLock</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">        </span><span class="c1"># optional</span>
+<span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w">        </span><span class="c1"># optional</span>
+</pre></div>
+</div>
+</dd>
+<dt>users</dt><dd><p>Array of Kubernetes secrets from which the Operator generates MinIO users during tenant provisioning.</p>
+<p>Each secret should specify the <code class="docutils literal notranslate"><span class="pre">CONSOLE_ACCESS_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">CONSOLE_SECRET_KEY</span></code> as the access key and secret key for that user.</p>
+</dd>
+<dt>podManagementPolicy</dt><dd><p>The <a class="reference external" href="https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#pod-management-policy">PodManagement</a> policy for MinIO Tenant Pods. 
+Can be “OrderedReady” or “Parallel”</p>
+</dd>
+<dt>readiness</dt><dd><p><a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">Readiness Probe</a> for monitoring Tenant container readiness.
+Tenant pods will be removed from service endpoints if the probe fails.</p>
+</dd>
+<dt>startup</dt><dd><p><a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">Startup Probe</a> for monitoring container startup. 
+Tenant pods will be restarted if the probe fails.
+Refer</p>
+</dd>
+<dt>lifecycle</dt><dd><p>The <a class="reference external" href="https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/">Lifecycle hooks</a> for container.</p>
+</dd>
+<dt>exposeServices</dt><dd><p>Directs the Operator to deploy the MinIO S3 API and Console services as LoadBalancer objects.</p>
+<p>If the Kubernetes cluster has a configured LoadBalancer, it can attempt to route traffic to those services automatically.</p>
+<ul class="simple">
+<li><p>Specify <code class="docutils literal notranslate"><span class="pre">minio:</span> <span class="pre">true</span></code> to expose the MinIO S3 API.</p></li>
+<li><p>Specify <code class="docutils literal notranslate"><span class="pre">console:</span> <span class="pre">true</span></code> to expose the Console.</p></li>
+</ul>
+<p>Both fields default to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</dd>
+<dt>serviceAccountName</dt><dd><p>The <a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/">Kubernetes Service Account</a> associated with the Tenant.</p>
+</dd>
+<dt>prometheusOperator</dt><dd><p>Directs the Operator to add the Tenant’s metric scrape configuration to an existing Kubernetes Prometheus deployment managed by the Prometheus Operator.</p>
+</dd>
+<dt>logging</dt><dd><p>Configure pod logging configuration for the MinIO Tenant.</p>
+<ul class="simple">
+<li><p>Specify <code class="docutils literal notranslate"><span class="pre">json</span></code> for JSON-formatted logs.</p></li>
+<li><p>Specify <code class="docutils literal notranslate"><span class="pre">anonymous</span></code> for anonymized logs.</p></li>
+<li><p>Specify <code class="docutils literal notranslate"><span class="pre">quiet</span></code> to supress logging.</p></li>
+</ul>
+<p>An example of JSON-formatted logs is as follows:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>k<span class="w"> </span>logs<span class="w"> </span>myminio-pool-0-0<span class="w"> </span>-n<span class="w"> </span>default
+<span class="o">{</span><span class="s2">&quot;level&quot;</span>:<span class="s2">&quot;INFO&quot;</span>,<span class="s2">&quot;errKind&quot;</span>:<span class="s2">&quot;&quot;</span>,<span class="s2">&quot;time&quot;</span>:<span class="s2">&quot;2022-04-07T21:49:33.740058549Z&quot;</span>,<span class="s2">&quot;message&quot;</span>:<span class="s2">&quot;All MinIO sub-systems initialized successfully&quot;</span><span class="o">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>serviceMetadata</dt><dd><p>serviceMetadata allows passing additional labels and annotations to MinIO and Console specific
+services created by the operator.</p>
+</dd>
+<dt>env</dt><dd><p>Add environment variables to be set in MinIO container (<a class="reference external" href="https://github.com/minio/minio/tree/master/docs/config">https://github.com/minio/minio/tree/master/docs/config</a>)</p>
+</dd>
+<dt>priorityClassName</dt><dd><p>PriorityClassName indicates the Pod priority and hence importance of a Pod relative to other Pods.
+This is applied to MinIO pods only.
+Refer Kubernetes documentation for details <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass/">https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass/</a></p>
+</dd>
+<dt>additionalVolumes</dt><dd><p>An array of <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">Volumes</a> which the Operator can mount to Tenant pods.</p>
+<p>The volumes must exist <em>and</em> be accessible to the Tenant pods.</p>
+</dd>
+<dt>additionalVolumeMounts</dt><dd><p>An array of volume mount points associated to each Tenant container.</p>
+<p>Specify each item in the array as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volumename</span>
+<span class="w">  </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/mount</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">name</span></code> field must correspond to an entry in the <code class="docutils literal notranslate"><span class="pre">additionalVolumes</span></code> array.</p>
+</dd>
+</dl>
+</dd>
+<dt>ingress</dt><dd><p>Configures <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a> for the Tenant S3 API and Console.</p>
+<p>Set the keys to conform to the Ingress controller and configuration of your choice.</p>
+</dd>
+</dl>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+YAML</label><div class="sd-tab-content docutils">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Root key for MinIO Tenant Chart</span>
+<span class="n">tenant</span><span class="p">:</span>
+  <span class="c1">###</span>
+  <span class="c1"># The Tenant name</span>
+  <span class="c1">#</span>
+  <span class="c1"># Change this to match your preferred MinIO Tenant name.</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">myminio</span>
+  <span class="c1">###</span>
+  <span class="c1"># Specify the Operator container image to use for the deployment.</span>
+  <span class="c1"># ``image.tag`` </span>
+  <span class="c1"># For example, the following sets the image to the ``quay.io/minio/operator`` repo and the v7.0.0 tag.</span>
+  <span class="c1"># The container pulls the image if not already present:</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. code-block:: yaml</span>
+  <span class="c1"># </span>
+  <span class="c1">#    image:</span>
+  <span class="c1">#       repository: quay.io/minio/minio</span>
+  <span class="c1">#       tag: RELEASE.2024-11-07T00-52-20Z</span>
+  <span class="c1">#       pullPolicy: IfNotPresent</span>
+  <span class="c1">#</span>
+  <span class="c1"># The chart also supports specifying an image based on digest value:</span>
+  <span class="c1"># </span>
+  <span class="c1"># .. code-block:: yaml</span>
+  <span class="c1"># </span>
+  <span class="c1">#    image:</span>
+  <span class="c1">#       repository: quay.io/minio/minio@sha256</span>
+  <span class="c1">#       digest: 28c80b379c75242c6fe793dfbf212f43c602140a0de5ebe3d9c2a3a7b9f9f983</span>
+  <span class="c1">#       pullPolicy: IfNotPresent</span>
+  <span class="c1">#</span>
+  <span class="c1">#</span>
+  <span class="n">image</span><span class="p">:</span>
+    <span class="n">repository</span><span class="p">:</span> <span class="n">quay</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">minio</span><span class="o">/</span><span class="n">minio</span>
+    <span class="n">tag</span><span class="p">:</span> <span class="n">RELEASE</span><span class="mf">.2024</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">07</span><span class="n">T00</span><span class="o">-</span><span class="mi">52</span><span class="o">-</span><span class="mi">20</span><span class="n">Z</span>
+    <span class="n">pullPolicy</span><span class="p">:</span> <span class="n">IfNotPresent</span>
+  <span class="c1">###</span>
+  <span class="c1">#</span>
+  <span class="c1"># An array of Kubernetes secrets to use for pulling images from a private ``image.repository``.</span>
+  <span class="c1"># Only one array element is supported at this time.</span>
+  <span class="n">imagePullSecret</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1">#</span>
+  <span class="c1"># Specify `initContainers &lt;https://kubernetes.io/docs/concepts/workloads/pods/init-containers/&gt;`__ to perform setup or configuration tasks before the main Tenant pods starts.</span>
+  <span class="c1">#</span>
+  <span class="c1"># Example of init container which waits for idenity provider to be reachable before starting MinIO Tenant:</span>
+  <span class="c1"># </span>
+  <span class="c1"># .. code-block:: yaml</span>
+  <span class="c1">#</span>
+  <span class="c1">#    initContainers:</span>
+  <span class="c1">#     - name: wait-for-idp</span>
+  <span class="c1">#       image: busybox</span>
+  <span class="c1">#       command:</span>
+  <span class="c1">#         - sh</span>
+  <span class="c1">#         - -c</span>
+  <span class="c1">#         - |</span>
+  <span class="c1">#           URL=&quot;https://idp-url&quot;</span>
+  <span class="c1">#           echo &quot;Checking IdP reachability (${URL})&quot;</span>
+  <span class="c1">#           until $(wget -q -O &quot;/dev/null&quot; ${URL}) ; do</span>
+  <span class="c1">#             echo &quot;IdP (${URL}) not reachable. Waiting to be reachable...&quot;</span>
+  <span class="c1">#             sleep 5</span>
+  <span class="c1">#           done</span>
+  <span class="c1">#           echo &quot;IdP (${URL}) reachable. Starting MinIO...&quot;</span>
+  <span class="c1">#</span>
+  <span class="n">initContainers</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="c1">###</span>
+  <span class="c1"># The Kubernetes `Scheduler &lt;https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/&gt;`__ to use for dispatching Tenant pods.</span>
+  <span class="c1">#</span>
+  <span class="c1"># Specify an empty dictionary ``{}`` to dispatch pods with the default scheduler.</span>
+  <span class="n">scheduler</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># The Kubernetes secret name that contains MinIO environment variable configurations.</span>
+  <span class="c1"># The secret is expected to have a key named config.env containing environment variables exports.</span>
+  <span class="n">configuration</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">myminio</span><span class="o">-</span><span class="n">env</span><span class="o">-</span><span class="n">configuration</span>
+  <span class="c1">###</span>
+  <span class="c1"># Root key for dynamically creating a secret for use with configuring root MinIO User</span>
+  <span class="c1"># Specify the ``name`` and then a list of environment variables.</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. important::</span>
+  <span class="c1">#</span>
+  <span class="c1">#    Do not use this in production environments.</span>
+  <span class="c1">#    This field is intended for use with rapid development or testing only.</span>
+  <span class="c1">#</span>
+  <span class="c1"># For example:</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. code-block:: yaml</span>
+  <span class="c1">#</span>
+  <span class="c1">#    name: myminio-env-configuration</span>
+  <span class="c1">#    accessKey: minio</span>
+  <span class="c1">#      secretKey: minio123</span>
+  <span class="c1">#</span>
+  <span class="n">configSecret</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">myminio</span><span class="o">-</span><span class="n">env</span><span class="o">-</span><span class="n">configuration</span>
+    <span class="n">accessKey</span><span class="p">:</span> <span class="n">minio</span>
+    <span class="n">secretKey</span><span class="p">:</span> <span class="n">minio123</span>
+    <span class="c1">#existingSecret: true</span>
+
+  <span class="c1">###</span>
+  <span class="c1"># Metadata that will be added to the statefulset and pods of all pools</span>
+  <span class="n">poolsMetadata</span><span class="p">:</span>
+    <span class="c1">###</span>
+    <span class="c1"># Specify `annotations &lt;https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/&gt;`__ to associate to Tenant pods.</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="c1">###</span>
+    <span class="c1"># Specify `labels &lt;https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/&gt;`__ to associate to Tenant pods.</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="c1">###</span>
+  <span class="c1"># If this variable is set to true, then enable the usage of an existing Kubernetes secret to set environment variables for the Tenant.</span>
+  <span class="c1"># The existing Kubernetes secret name must be placed under .tenant.configuration.name e.g. existing-minio-env-configuration</span>
+  <span class="c1"># The secret must contain a key ``config.env``.</span>
+  <span class="c1"># The values should be a series of export statements to set environment variables for the Tenant.</span>
+  <span class="c1"># For example:</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. code-block:: shell</span>
+  <span class="c1">#</span>
+  <span class="c1">#    stringData:</span>
+  <span class="c1">#       config.env: |-</span>
+  <span class="c1">#         export MINIO_ROOT_USER=ROOTUSERNAME</span>
+  <span class="c1">#         export MINIO_ROOT_PASSWORD=ROOTUSERPASSWORD</span>
+  <span class="c1">#</span>
+  <span class="c1">#   existingSecret: false</span>
+  <span class="c1">###</span>
+  <span class="c1"># Top level key for configuring MinIO Pool(s) in this Tenant.</span>
+  <span class="c1">#</span>
+  <span class="c1"># See `Operator CRD: Pools &lt;https://docs.min.io/community/minio-object-store/reference/operator-crd.html#pool&gt;`__ for more information on all subfields.</span>
+  <span class="n">pools</span><span class="p">:</span>
+    <span class="c1">###</span>
+    <span class="c1"># The number of MinIO Tenant Pods / Servers in this pool.</span>
+    <span class="c1"># For standalone mode, supply 1. For distributed mode, supply 4 or more.</span>
+    <span class="c1"># Note that the operator does not support upgrading from standalone to distributed mode.</span>
+    <span class="o">-</span> <span class="n">servers</span><span class="p">:</span> <span class="mi">4</span>
+      <span class="c1">###</span>
+      <span class="c1"># Custom name for the pool</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">pool</span><span class="o">-</span><span class="mi">0</span>
+      <span class="c1">###</span>
+      <span class="c1"># The number of volumes attached per MinIO Tenant Pod / Server.</span>
+      <span class="n">volumesPerServer</span><span class="p">:</span> <span class="mi">4</span>
+      <span class="c1">###</span>
+      <span class="c1"># The capacity per volume requested per MinIO Tenant Pod.</span>
+      <span class="n">size</span><span class="p">:</span> <span class="mi">10</span><span class="n">Gi</span>
+      <span class="c1">###</span>
+      <span class="c1"># The `storageClass &lt;https://kubernetes.io/docs/concepts/storage/storage-classes/&gt;`__ to associate with volumes generated for this pool.</span>
+      <span class="c1">#</span>
+      <span class="c1"># If using Amazon Elastic Block Store (EBS) CSI driver</span>
+      <span class="c1"># Please make sure to set xfs for &quot;csi.storage.k8s.io/fstype&quot; parameter under StorageClass.parameters.</span>
+      <span class="c1"># Docs: https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/master/docs/parameters.md</span>
+      <span class="c1"># storageClassName: standard</span>
+      <span class="c1">###</span>
+      <span class="c1"># Specify `storageAnnotations &lt;https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/&gt;`__ to associate to PVCs.</span>
+      <span class="n">storageAnnotations</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1"># Specify `storageLabels &lt;https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/&gt;`__ to associate to PVCs.</span>
+      <span class="n">storageLabels</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1"># Specify `annotations &lt;https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/&gt;`__ to associate to Tenant pods.</span>
+      <span class="n">annotations</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1"># Specify `labels &lt;https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/&gt;`__ to associate to Tenant pods.</span>
+      <span class="n">labels</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1">#</span>
+      <span class="c1"># An array of `Toleration labels &lt;https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/&gt;`__ to associate to Tenant pods.</span>
+      <span class="c1">#</span>
+      <span class="c1"># These settings determine the distribution of pods across worker nodes.</span>
+      <span class="n">tolerations</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+      <span class="c1">###</span>
+      <span class="c1"># Any `Node Selectors &lt;https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/&gt;`__ to apply to Tenant pods.</span>
+      <span class="c1">#</span>
+      <span class="c1"># The Kubernetes scheduler uses these selectors to determine which worker nodes onto which it can deploy Tenant pods.</span>
+      <span class="c1">#</span>
+      <span class="c1"># If no worker nodes match the specified selectors, the Tenant deployment will fail.</span>
+      <span class="n">nodeSelector</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1">#</span>
+      <span class="c1"># The `affinity &lt;https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/&gt;`__ or anti-affinity settings to apply to Tenant pods.</span>
+      <span class="c1">#</span>
+      <span class="c1"># These settings determine the distribution of pods across worker nodes and can help prevent or allow colocating pods onto the same worker nodes.</span>
+      <span class="n">affinity</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1"># </span>
+      <span class="c1"># The `Requests or Limits &lt;https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/&gt;`__ for resources to associate to Tenant pods.</span>
+      <span class="c1">#</span>
+      <span class="c1"># These settings can control the minimum and maximum resources requested for each pod.</span>
+      <span class="c1"># If no worker nodes can meet the specified requests, the Operator may fail to deploy.</span>
+      <span class="n">resources</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+      <span class="c1">###</span>
+      <span class="c1"># The Kubernetes `SecurityContext &lt;https://kubernetes.io/docs/tasks/configure-pod-container/security-context/&gt;`__ to use for deploying Tenant resources.</span>
+      <span class="c1">#</span>
+      <span class="c1"># You may need to modify these values to meet your cluster&#39;s security and access settings.</span>
+      <span class="c1">#</span>
+      <span class="c1"># We recommend disabling recursive permission changes by setting ``fsGroupChangePolicy`` to ``OnRootMismatch`` as those operations can be expensive for certain workloads (e.g. large volumes with many small files).</span>
+      <span class="n">securityContext</span><span class="p">:</span>
+        <span class="n">runAsUser</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="n">runAsGroup</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="n">fsGroup</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="n">fsGroupChangePolicy</span><span class="p">:</span> <span class="s2">&quot;OnRootMismatch&quot;</span>
+        <span class="n">runAsNonRoot</span><span class="p">:</span> <span class="n">true</span>
+      <span class="c1">###</span>
+      <span class="c1"># The Kubernetes `SecurityContext &lt;https://kubernetes.io/docs/tasks/configure-pod-container/security-context/&gt;`__ to use for deploying Tenant containers.</span>
+      <span class="c1"># You may need to modify these values to meet your cluster&#39;s security and access settings.</span>
+      <span class="n">containerSecurityContext</span><span class="p">:</span>
+        <span class="n">runAsUser</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="n">runAsGroup</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="n">runAsNonRoot</span><span class="p">:</span> <span class="n">true</span>
+        <span class="n">allowPrivilegeEscalation</span><span class="p">:</span> <span class="n">false</span>
+        <span class="n">capabilities</span><span class="p">:</span>
+          <span class="n">drop</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">ALL</span>
+        <span class="n">seccompProfile</span><span class="p">:</span>
+          <span class="nb">type</span><span class="p">:</span> <span class="n">RuntimeDefault</span>
+      <span class="c1">###</span>
+      <span class="c1">#</span>
+      <span class="c1"># An array of `Topology Spread Constraints &lt;https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/&gt;`__ to associate to Operator Console pods.</span>
+      <span class="c1">#</span>
+      <span class="c1"># These settings determine the distribution of pods across worker nodes.</span>
+      <span class="n">topologySpreadConstraints</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+      <span class="c1">###</span>
+      <span class="c1">#</span>
+      <span class="c1"># The name of a custom `Container Runtime &lt;https://kubernetes.io/docs/concepts/containers/runtime-class/&gt;`__ to use for the Operator Console pods.</span>
+      <span class="c1"># runtimeClassName: &quot;&quot;</span>
+  <span class="c1">###</span>
+  <span class="c1"># The mount path where Persistent Volumes are mounted inside Tenant container(s).</span>
+  <span class="n">mountPath</span><span class="p">:</span> <span class="o">/</span><span class="n">export</span>
+  <span class="c1">###</span>
+  <span class="c1"># The Sub path inside Mount path where MinIO stores data.</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. warning::</span>
+  <span class="c1">#</span>
+  <span class="c1">#    Treat the ``mountPath`` and ``subPath`` values as immutable once you deploy the Tenant.</span>
+  <span class="c1">#    If you change these values post-deployment, then you may have different paths for new and pre-existing data.</span>
+  <span class="c1">#    This can vastly increase operational complexity and may result in unpredictable data states.</span>
+  <span class="n">subPath</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span>
+  <span class="c1">###</span>
+  <span class="c1"># Configures a Prometheus-compatible scraping endpoint at the specified port.</span>
+  <span class="n">metrics</span><span class="p">:</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">port</span><span class="p">:</span> <span class="mi">9000</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="n">http</span>
+  <span class="c1">###</span>
+  <span class="c1"># Configures external certificate settings for the Tenant.</span>
+  <span class="n">certificate</span><span class="p">:</span>
+    <span class="c1">###</span>
+    <span class="c1"># Specify an array of Kubernetes TLS secrets, where each entry corresponds to a secret the TLS private key and public certificate pair.</span>
+    <span class="c1">#</span>
+    <span class="c1"># This is used by MinIO to verify TLS connections from clients using those CAs</span>
+    <span class="c1"># If you omit this and have clients using TLS certificates minted by an external CA, those connections may fail with warnings around certificate verification.</span>
+    <span class="c1"># See `Operator CRD: TenantSpec &lt;https://docs.min.io/community/minio-object-store/reference/operator-crd.html#tenantspec&gt;`__.</span>
+    <span class="n">externalCaCertSecret</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+    <span class="c1">###</span>
+    <span class="c1"># Specify an array of Kubernetes secrets, where each entry corresponds to a secret contains the TLS private key and public certificate pair.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Omit this to use only the MinIO Operator autogenerated certificates.</span>
+    <span class="c1"># </span>
+    <span class="c1"># If you omit this field *and* set ``requestAutoCert`` to false, the Tenant starts without TLS.</span>
+    <span class="c1">#</span>
+    <span class="c1"># See `Operator CRD: TenantSpec &lt;https://docs.min.io/community/minio-object-store/reference/operator-crd.html#tenantspec&gt;`__.</span>
+    <span class="c1">#</span>
+    <span class="c1"># .. important::</span>
+    <span class="c1">#</span>
+    <span class="c1">#    The MinIO Operator may output TLS connectivity errors if it cannot trust the Certificate Authority (CA) which minted the custom certificates.</span>
+    <span class="c1">#</span>
+    <span class="c1">#    You can pass the CA to the Operator to allow it to trust that cert.</span>
+    <span class="c1">#    See `Self-Signed, Internal, and Private Certificates &lt;https://docs.min.io/community/minio-object-store/operations/network-encryption.html#self-signed-internal-private-certificates-and-public-cas-with-intermediate-certificates&gt;`__ for more information.</span>
+    <span class="c1">#    This step may also be necessary for globally trusted CAs where you must provide intermediate certificates to the Operator to help build the full chain of trust.</span>
+    <span class="n">externalCertSecret</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+    <span class="c1">###</span>
+    <span class="c1"># Enable automatic Kubernetes based `certificate generation and signing &lt;https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster&gt;`__</span>
+    <span class="n">requestAutoCert</span><span class="p">:</span> <span class="n">true</span>
+    <span class="c1">###</span>
+    <span class="c1"># The minimum number of days to expiry before an alert for an expiring certificate is fired.</span>
+    <span class="c1"># In the below example, if a given certificate will expire in 7 days then expiration events will only be triggered 1 day before expiry</span>
+    <span class="c1"># certExpiryAlertThreshold: 1</span>
+    <span class="c1">###</span>
+    <span class="c1"># This field is used only when ``requestAutoCert: true``.</span>
+    <span class="c1"># Use this field to set CommonName for the auto-generated certificate. </span>
+    <span class="c1"># MinIO defaults to using the internal Kubernetes DNS name for the pod</span>
+    <span class="c1"># The default DNS name format is typically ``*.minio.default.svc.cluster.local``.</span>
+    <span class="c1">#</span>
+    <span class="c1"># See `Operator CRD: CertificateConfig &lt;https://docs.min.io/community/minio-object-store/reference/operator-crd.html#certificateconfig&gt;`__</span>
+    <span class="n">certConfig</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># MinIO features to enable or disable in the MinIO Tenant</span>
+  <span class="c1"># See `Operator CRD: Features &lt;https://docs.min.io/community/minio-object-store/reference/operator-crd.html#features&gt;`__.</span>
+  <span class="n">features</span><span class="p">:</span>
+    <span class="n">bucketDNS</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">domains</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="n">enableSFTP</span><span class="p">:</span> <span class="n">false</span>
+  <span class="c1">###</span>
+  <span class="c1"># Array of objects describing one or more buckets to create during tenant provisioning.</span>
+  <span class="c1"># Example:</span>
+  <span class="c1"># </span>
+  <span class="c1"># .. code-block:: yaml</span>
+  <span class="c1">#</span>
+  <span class="c1">#    - name: my-minio-bucket</span>
+  <span class="c1">#      objectLock: false        # optional</span>
+  <span class="c1">#      region: us-east-1        # optional</span>
+  <span class="n">buckets</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="c1">###</span>
+  <span class="c1"># Array of Kubernetes secrets from which the Operator generates MinIO users during tenant provisioning.</span>
+  <span class="c1">#</span>
+  <span class="c1"># Each secret should specify the ``CONSOLE_ACCESS_KEY`` and ``CONSOLE_SECRET_KEY`` as the access key and secret key for that user.</span>
+  <span class="n">users</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="c1">###</span>
+  <span class="c1"># The `PodManagement &lt;https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#pod-management-policy&gt;`__ policy for MinIO Tenant Pods. </span>
+  <span class="c1"># Can be &quot;OrderedReady&quot; or &quot;Parallel&quot;</span>
+  <span class="n">podManagementPolicy</span><span class="p">:</span> <span class="n">Parallel</span>
+  <span class="c1"># The `Liveness Probe &lt;https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes&gt;`__ for monitoring Tenant pod liveness. </span>
+  <span class="c1"># Tenant pods will be restarted if the probe fails.</span>
+  <span class="n">liveness</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># `Readiness Probe &lt;https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/&gt;`__ for monitoring Tenant container readiness.</span>
+  <span class="c1"># Tenant pods will be removed from service endpoints if the probe fails.</span>
+  <span class="n">readiness</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># `Startup Probe &lt;https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/&gt;`__ for monitoring container startup. </span>
+  <span class="c1"># Tenant pods will be restarted if the probe fails.</span>
+  <span class="c1"># Refer </span>
+  <span class="n">startup</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># The `Lifecycle hooks &lt;https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/&gt;`__ for container.</span>
+  <span class="n">lifecycle</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># Directs the Operator to deploy the MinIO S3 API and Console services as LoadBalancer objects.</span>
+  <span class="c1">#</span>
+  <span class="c1"># If the Kubernetes cluster has a configured LoadBalancer, it can attempt to route traffic to those services automatically.</span>
+  <span class="c1">#</span>
+  <span class="c1"># - Specify ``minio: true`` to expose the MinIO S3 API.</span>
+  <span class="c1"># - Specify ``console: true`` to expose the Console.</span>
+  <span class="c1">#</span>
+  <span class="c1"># Both fields default to ``false``.</span>
+  <span class="n">exposeServices</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># The `Kubernetes Service Account &lt;https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/&gt;`__ associated with the Tenant.</span>
+  <span class="n">serviceAccountName</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+  <span class="c1">###</span>
+  <span class="c1"># Directs the Operator to add the Tenant&#39;s metric scrape configuration to an existing Kubernetes Prometheus deployment managed by the Prometheus Operator.</span>
+  <span class="n">prometheusOperator</span><span class="p">:</span> <span class="n">false</span>
+  <span class="c1">###</span>
+  <span class="c1"># Configure pod logging configuration for the MinIO Tenant.</span>
+  <span class="c1">#</span>
+  <span class="c1"># - Specify ``json`` for JSON-formatted logs.</span>
+  <span class="c1"># - Specify ``anonymous`` for anonymized logs.</span>
+  <span class="c1"># - Specify ``quiet`` to supress logging.</span>
+  <span class="c1">#</span>
+  <span class="c1"># An example of JSON-formatted logs is as follows:</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. code-block:: shell</span>
+  <span class="c1">#</span>
+  <span class="c1">#    $ k logs myminio-pool-0-0 -n default</span>
+  <span class="c1">#    {&quot;level&quot;:&quot;INFO&quot;,&quot;errKind&quot;:&quot;&quot;,&quot;time&quot;:&quot;2022-04-07T21:49:33.740058549Z&quot;,&quot;message&quot;:&quot;All MinIO sub-systems initialized successfully&quot;}</span>
+  <span class="n">logging</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># serviceMetadata allows passing additional labels and annotations to MinIO and Console specific</span>
+  <span class="c1"># services created by the operator.</span>
+  <span class="n">serviceMetadata</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">###</span>
+  <span class="c1"># Add environment variables to be set in MinIO container (https://github.com/minio/minio/tree/master/docs/config)</span>
+  <span class="n">env</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="c1">###</span>
+  <span class="c1"># PriorityClassName indicates the Pod priority and hence importance of a Pod relative to other Pods.</span>
+  <span class="c1"># This is applied to MinIO pods only.</span>
+  <span class="c1"># Refer Kubernetes documentation for details https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass/</span>
+  <span class="n">priorityClassName</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+  <span class="c1">###</span>
+  <span class="c1"># An array of `Volumes &lt;https://kubernetes.io/docs/concepts/storage/volumes/&gt;`__ which the Operator can mount to Tenant pods.</span>
+  <span class="c1">#</span>
+  <span class="c1"># The volumes must exist *and* be accessible to the Tenant pods.</span>
+  <span class="n">additionalVolumes</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="c1">###</span>
+  <span class="c1"># An array of volume mount points associated to each Tenant container.</span>
+  <span class="c1"># </span>
+  <span class="c1"># Specify each item in the array as follows:</span>
+  <span class="c1">#</span>
+  <span class="c1"># .. code-block:: yaml</span>
+  <span class="c1">#</span>
+  <span class="c1">#    volumeMounts:</span>
+  <span class="c1">#    - name: volumename</span>
+  <span class="c1">#      mountPath: /path/to/mount</span>
+  <span class="c1">#</span>
+  <span class="c1"># The ``name`` field must correspond to an entry in the ``additionalVolumes`` array.</span>
+  <span class="n">additionalVolumeMounts</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="c1"># Define configuration for KES (stateless and distributed key-management system)</span>
+  <span class="c1"># Refer https://github.com/minio/kes</span>
+  <span class="c1">#kes:</span>
+  <span class="c1">#  ## Image field:</span>
+  <span class="c1">#  # Image from tag (original behavior), for example:</span>
+  <span class="c1">#  # image:</span>
+  <span class="c1">#  #   repository: quay.io/minio/kes</span>
+  <span class="c1">#  #   tag: 2024-11-25T13-44-31Z</span>
+  <span class="c1">#  # Image from digest (added after original behavior), for example:</span>
+  <span class="c1">#  # image:</span>
+  <span class="c1">#  #   repository: quay.io/minio/kes@sha256</span>
+  <span class="c1">#  #   digest: fb15af611149892f357a8a99d1bcd8bf5dae713bd64c15e6eb27fbdb88fc208b</span>
+  <span class="c1">#  image:</span>
+  <span class="c1">#    repository: quay.io/minio/kes</span>
+  <span class="c1">#    tag: 2024-11-25T13-44-31Z</span>
+  <span class="c1">#    pullPolicy: IfNotPresent</span>
+  <span class="c1">#  env: [ ]</span>
+  <span class="c1">#  replicas: 2</span>
+  <span class="c1">#  configuration: |-</span>
+  <span class="c1">#    address: :7373</span>
+  <span class="c1">#    tls:</span>
+  <span class="c1">#      key: /tmp/kes/server.key   # Path to the TLS private key</span>
+  <span class="c1">#      cert: /tmp/kes/server.crt # Path to the TLS certificate</span>
+  <span class="c1">#      proxy:</span>
+  <span class="c1">#        identities: []</span>
+  <span class="c1">#        header:</span>
+  <span class="c1">#          cert: X-Tls-Client-Cert</span>
+  <span class="c1">#    admin:</span>
+  <span class="c1">#      identity: ${MINIO_KES_IDENTITY}</span>
+  <span class="c1">#    cache:</span>
+  <span class="c1">#      expiry:</span>
+  <span class="c1">#        any: 5m0s</span>
+  <span class="c1">#        unused: 20s</span>
+  <span class="c1">#    log:</span>
+  <span class="c1">#      error: on</span>
+  <span class="c1">#      audit: off</span>
+  <span class="c1">#    keystore:</span>
+  <span class="c1">#      # KES configured with fs (File System mode) doesn&#39;t work in Kubernetes environments and is not recommended</span>
+  <span class="c1">#      # use a real KMS</span>
+  <span class="c1">#      # fs:</span>
+  <span class="c1">#      #   path: &quot;./keys&quot; # Path to directory. Keys will be stored as files. Not Recommended for Production.</span>
+  <span class="c1">#      vault:</span>
+  <span class="c1">#        endpoint: &quot;http://vault.default.svc.cluster.local:8200&quot; # The Vault endpoint</span>
+  <span class="c1">#        namespace: &quot;&quot; # An optional Vault namespace. See: https://www.vaultproject.io/docs/enterprise/namespaces/index.html</span>
+  <span class="c1">#        prefix: &quot;my-minio&quot;    # An optional K/V prefix. The server will store keys under this prefix.</span>
+  <span class="c1">#        approle:    # AppRole credentials. See: https://www.vaultproject.io/docs/auth/approle.html</span>
+  <span class="c1">#          id: &quot;&lt;YOUR APPROLE ID HERE&gt;&quot;      # Your AppRole Role ID</span>
+  <span class="c1">#          secret: &quot;&lt;YOUR APPROLE SECRET ID HERE&gt;&quot;  # Your AppRole Secret ID</span>
+  <span class="c1">#          retry: 15s  # Duration until the server tries to re-authenticate after connection loss.</span>
+  <span class="c1">#        tls:        # The Vault client TLS configuration for mTLS authentication and certificate verification</span>
+  <span class="c1">#          key: &quot;&quot;     # Path to the TLS client private key for mTLS authentication to Vault</span>
+  <span class="c1">#          cert: &quot;&quot;    # Path to the TLS client certificate for mTLS authentication to Vault</span>
+  <span class="c1">#          ca: &quot;&quot;      # Path to one or multiple PEM root CA certificates</span>
+  <span class="c1">#        status:     # Vault status configuration. The server will periodically reach out to Vault to check its status.</span>
+  <span class="c1">#          ping: 10s   # Duration until the server checks Vault&#39;s status again.</span>
+  <span class="c1">#      # aws:</span>
+  <span class="c1">#      #   # The AWS SecretsManager key store. The server will store</span>
+  <span class="c1">#      #   # secret keys at the AWS SecretsManager encrypted with</span>
+  <span class="c1">#      #   # AWS-KMS. See: https://aws.amazon.com/secrets-manager</span>
+  <span class="c1">#      #   secretsmanager:</span>
+  <span class="c1">#      #     endpoint: &quot;&quot;   # The AWS SecretsManager endpoint      - e.g.: secretsmanager.us-east-2.amazonaws.com</span>
+  <span class="c1">#      #     region: &quot;&quot;     # The AWS region of the SecretsManager - e.g.: us-east-2</span>
+  <span class="c1">#      #     kmskey: &quot;&quot;     # The AWS-KMS key ID used to en/decrypt secrets at the SecretsManager. By default (if not set) the default AWS-KMS key will be used.</span>
+  <span class="c1">#      #     credentials:   # The AWS credentials for accessing secrets at the AWS SecretsManager.</span>
+  <span class="c1">#      #       accesskey: &quot;&quot;  # Your AWS Access Key</span>
+  <span class="c1">#      #       secretkey: &quot;&quot;  # Your AWS Secret Key</span>
+  <span class="c1">#      #       token: &quot;&quot;      # Your AWS session token (usually optional)</span>
+  <span class="c1">#  imagePullPolicy: &quot;IfNotPresent&quot;</span>
+  <span class="c1">#  externalCertSecret: null</span>
+  <span class="c1">#  clientCertSecret: null</span>
+  <span class="c1">#  # Key name to be created on the KMS, default is &quot;my-minio-key&quot;</span>
+  <span class="c1">#  keyName: &quot;&quot;</span>
+  <span class="c1">#  resources: { }</span>
+  <span class="c1">#  nodeSelector: { }</span>
+  <span class="c1">#  affinity:</span>
+  <span class="c1">#    nodeAffinity: { }</span>
+  <span class="c1">#    podAffinity: { }</span>
+  <span class="c1">#    podAntiAffinity: { }</span>
+  <span class="c1">#  tolerations: [ ]</span>
+  <span class="c1">#  annotations: { }</span>
+  <span class="c1">#  labels: { }</span>
+  <span class="c1">#  serviceAccountName: &quot;&quot;</span>
+  <span class="c1">#  securityContext:</span>
+  <span class="c1">#    runAsUser: 1000</span>
+  <span class="c1">#    runAsGroup: 1000</span>
+  <span class="c1">#    runAsNonRoot: true</span>
+  <span class="c1">#    fsGroup: 1000</span>
+  <span class="c1">#  containerSecurityContext:</span>
+  <span class="c1">#    runAsUser: 1000</span>
+  <span class="c1">#    runAsGroup: 1000</span>
+  <span class="c1">#    runAsNonRoot: true</span>
+  <span class="c1">#    allowPrivilegeEscalation: false</span>
+  <span class="c1">#    capabilities:</span>
+  <span class="c1">#      drop:</span>
+  <span class="c1">#        - ALL</span>
+  <span class="c1">#    seccompProfile:</span>
+  <span class="c1">#      type: RuntimeDefault</span>
+
+<span class="c1">###</span>
+<span class="c1"># Configures `Ingress &lt;https://kubernetes.io/docs/concepts/services-networking/ingress/&gt;`__ for the Tenant S3 API and Console.</span>
+<span class="c1">#</span>
+<span class="c1"># Set the keys to conform to the Ingress controller and configuration of your choice.</span>
+<span class="n">ingress</span><span class="p">:</span>
+  <span class="n">api</span><span class="p">:</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">ingressClassName</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="n">tls</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+    <span class="n">host</span><span class="p">:</span> <span class="n">minio</span><span class="o">.</span><span class="n">local</span>
+    <span class="n">path</span><span class="p">:</span> <span class="o">/</span>
+    <span class="n">pathType</span><span class="p">:</span> <span class="n">Prefix</span>
+  <span class="n">console</span><span class="p">:</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">ingressClassName</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="n">tls</span><span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+    <span class="n">host</span><span class="p">:</span> <span class="n">minio</span><span class="o">-</span><span class="n">console</span><span class="o">.</span><span class="n">local</span>
+    <span class="n">path</span><span class="p">:</span> <span class="o">/</span>
+    <span class="n">pathType</span><span class="p">:</span> <span class="n">Prefix</span>
+<span class="c1"># Use an extraResources template section to include additional Kubernetes resources</span>
+<span class="c1"># with the Helm deployment.</span>
+<span class="c1">#extraResources:</span>
+<span class="c1">#  - |</span>
+<span class="c1">#    apiVersion: v1</span>
+<span class="c1">#    kind: Secret</span>
+<span class="c1">#    type: Opaque</span>
+<span class="c1">#    metadata:</span>
+<span class="c1">#      name: {{ dig &quot;tenant&quot; &quot;configSecret&quot; &quot;name&quot; &quot;&quot; (.Values | merge (dict)) }}</span>
+<span class="c1">#    stringData:</span>
+<span class="c1">#      config.env: |-</span>
+<span class="c1">#        export MINIO_ROOT_USER=&#39;minio&#39;</span>
+<span class="c1">#        export MINIO_ROOT_PASSWORD=&#39;minio123&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

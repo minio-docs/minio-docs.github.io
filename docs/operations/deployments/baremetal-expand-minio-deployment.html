@@ -1,0 +1,818 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Expand a Distributed MinIO Deployment &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../../_static/js/main.js"></script>
+    <script defer="defer" src="../../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/operations/deployments/baremetal-expand-minio-deployment.html" />
+    <link rel="icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Decommission Server Pools" href="baremetal-decommission-server-pool.html" />
+    <link rel="prev" title="Upgrade a MinIO Deployment" href="baremetal-upgrade-minio-deployment.html" /><meta name="pagename" content="operations/deployments/baremetal-expand-minio-deployment"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="installation.html">Installation and Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="kubernetes.html">Deploy MinIO on Kubernetes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="baremetal.html">Deploy MinIO on Baremetal</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="baremetal-deploy-minio-server.html">Install the MinIO Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-upgrade-minio-deployment.html">Upgrade a MinIO Deployment</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Expand a Distributed MinIO Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-decommission-server-pool.html">Decommission Server Pools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-migrate-fs-gateway.html">Migrate from Gateway or Filesystem Mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/batch-framework.html">Batch Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/security-token-service.html">Security Token Service (STS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/kubernetes.html">Kubernetes Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/integrations.html">Integrations</a></li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="expand-a-distributed-minio-deployment">
+<span id="expand-minio-distributed"></span><h1>Expand a Distributed MinIO Deployment<a class="headerlink" href="#expand-a-distributed-minio-deployment" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#prerequisites" id="id2">Prerequisites</a></p></li>
+<li><p><a class="reference internal" href="#considerations" id="id3">Considerations</a></p></li>
+<li><p><a class="reference internal" href="#expand-minio-distributed-baremetal" id="id4">Expand a Distributed MinIO Deployment</a></p></li>
+</ul>
+</nav>
+<p>MinIO supports expanding an existing distributed deployment by adding a new <a class="reference internal" href="../concepts.html#minio-intro-server-pool"><span class="std std-ref">Server Pool</span></a>.
+Each Pool expands the total available storage capacity of the cluster.</p>
+<p>Expansion does not provide Business Continuity/Disaster Recovery (BC/DR)-grade protections.
+While each pool is an independent set of servers with distinct <a class="reference internal" href="../concepts/erasure-coding.html#minio-ec-erasure-set"><span class="std std-ref">erasure sets</span></a> for availability, the complete loss of one pool results in MinIO stopping I/O for all pools in the deployment.
+Similarly, an erasure set which loses quorum in one pool represents data loss of objects stored in that set, regardless of the number of other erasure sets or pools.</p>
+<p>The new server pool does <strong>not</strong> need to use the same type or size of hardware and software configuration as any existing server pool, though doing so may allow for simplified cluster management and more predictable performance across pools.
+All drives in the new pool <strong>should</strong> be of the same type and size within the new pool.
+Review MinIO’s <a class="reference internal" href="../checklists/hardware.html#minio-hardware-checklist"><span class="std std-ref">hardware recommendations</span></a> for more complete guidance on selecting an appropriate configuration.</p>
+<p>To provide BC-DR grade failover and recovery support for your single or multi-pool MinIO deployments, use <a class="reference internal" href="../replication/multi-site-replication.html#minio-site-replication-overview"><span class="std std-ref">site replication</span></a>.</p>
+<p>The procedure on this page expands an existing <a class="reference internal" href="installation.html#deploy-minio-distributed"><span class="std std-ref">distributed</span></a> MinIO deployment with an additional server pool.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>MinIO does not support expanding Single-Node Single-Drive topologies.</p>
+</div>
+<section id="prerequisites">
+<span id="expand-minio-distributed-prereqs"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<section id="networking-and-firewalls">
+<h3>Networking and Firewalls<a class="headerlink" href="#networking-and-firewalls" title="Permalink to this heading"></a></h3>
+<p>Each node should have full bidirectional network access to every other node in
+the deployment. For containerized or orchestrated infrastructures, this may
+require specific configuration of networking and routing components such as
+ingress or load balancers. Certain operating systems may also require setting
+firewall rules. For example, the following command explicitly opens the default
+MinIO server API port <code class="docutils literal notranslate"><span class="pre">9000</span></code> on servers using <code class="docutils literal notranslate"><span class="pre">firewalld</span></code>:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>public<span class="w"> </span>--add-port<span class="o">=</span><span class="m">9000</span>/tcp
+firewall-cmd<span class="w"> </span>--reload
+</pre></div>
+</div>
+<p>All MinIO servers in the deployment <em>must</em> use the same listen port.</p>
+<p>If you set a static <a class="reference internal" href="../../administration/minio-console.html#minio-console"><span class="std std-ref">MinIO Console</span></a> port (e.g. <code class="docutils literal notranslate"><span class="pre">:9001</span></code>)
+you must <em>also</em> grant access to that port to ensure connectivity from external
+clients.</p>
+<p>MinIO <strong>strongly recomends</strong> using a load balancer to manage connectivity to the
+cluster. The Load Balancer should use a “Least Connections” algorithm for
+routing requests to the MinIO deployment, since any MinIO node in the deployment
+can receive, route, or process client requests.</p>
+<p>The following load balancers are known to work well with MinIO:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.nginx.com/products/nginx/load-balancing/">NGINX</a></p></li>
+<li><p><a class="reference external" href="https://cbonte.github.io/haproxy-dconv/2.3/intro.html#3.3.5">HAProxy</a></p></li>
+</ul>
+<p>Configuring firewalls or load balancers to support MinIO is out of scope for
+this procedure.
+The <a class="reference internal" href="../../integrations/setup-nginx-proxy-with-minio.html#integrations-nginx-proxy"><span class="std std-ref">Configure NGINX Proxy for MinIO Server</span></a> reference provides a baseline configuration for using NGINX as a reverse proxy with basic load balancing configured.</p>
+</section>
+<section id="sequential-hostnames">
+<h3>Sequential Hostnames<a class="headerlink" href="#sequential-hostnames" title="Permalink to this heading"></a></h3>
+<p>MinIO <em>requires</em> using expansion notation <code class="docutils literal notranslate"><span class="pre">{x...y}</span></code> to denote a sequential
+series of MinIO hosts when creating a server pool. MinIO therefore <em>requires</em>
+using sequentially-numbered hostnames to represent each
+<a class="reference internal" href="../../reference/minio-server/minio-server.html#command-minio.server" title="minio.server"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">minio</span> <span class="pre">server</span></code></a> process in the pool.</p>
+<p>Create the necessary DNS hostname mappings <em>prior</em> to starting this procedure.
+For example, the following hostnames would support a 4-node distributed
+server pool:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">minio5.example.com</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minio6.example.com</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minio7.example.com</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minio8.example.com</span></code></p></li>
+</ul>
+<p>You can specify the entire range of hostnames using the expansion notation
+<code class="docutils literal notranslate"><span class="pre">minio{5...8}.example.com</span></code>.</p>
+<p>Configuring DNS to support MinIO is out of scope for this procedure.</p>
+</section>
+<section id="storage-requirements">
+<h3>Storage Requirements<a class="headerlink" href="#storage-requirements" title="Permalink to this heading"></a></h3>
+<p>The following requirements summarize the <a class="reference internal" href="../checklists/hardware.html#minio-hardware-checklist-storage"><span class="std std-ref">Storage</span></a> section of MinIO’s hardware recommendations:</p>
+<dl>
+<dt>Use Local Storage</dt><dd><p>Direct-Attached Storage (DAS) has significant performance and consistency advantages over networked storage (<abbr title="Network Attached Storage">NAS</abbr>, <abbr title="Storage Area Network">SAN</abbr>, <abbr title="Network File Storage">NFS</abbr>).
+MinIO strongly recommends flash storage (NVMe, SSD) for primary or “hot” data.</p>
+</dd>
+<dt>Use XFS-Formatting for Drives</dt><dd><p>MinIO strongly recommends provisioning XFS formatted drives for storage.
+MinIO uses XFS as part of internal testing and validation suites, providing additional confidence in performance and behavior at all scales.</p>
+<p>MinIO does <strong>not</strong> test nor recommend any other filesystem, such as EXT4, BTRFS, or ZFS.</p>
+</dd>
+<dt>Use Consistent Type of Drive</dt><dd><p>MinIO does not distinguish drive types and does not benefit from mixed storage types.
+Each <a class="reference internal" href="../../glossary.html#term-pool"><span class="xref std std-term">pool</span></a> must use the same type (NVMe, SSD)</p>
+<p>For example, deploy a pool consisting of only NVMe drives.
+If you deploy some drives as SSD or HDD, MinIO treats those drives identically to the NVMe drives.
+This can result in performance issues, as some drives have differing or worse read/write characteristics and cannot respond at the same rate as the NVMe drives.</p>
+</dd>
+<dt>Use Consistent Size of Drive</dt><dd><p>MinIO limits the size used per drive to the smallest drive in the pool.</p>
+<p>For example, deploy a pool consisting of the same number of NVMe drives with identical capacity of <code class="docutils literal notranslate"><span class="pre">7.68TiB</span></code>.
+If you deploy one drive with <code class="docutils literal notranslate"><span class="pre">3.84TiB</span></code>, MinIO treats all drives in the pool as having that smaller capacity.</p>
+</dd>
+<dt>Configure Sequential Drive Mounting</dt><dd><p>MinIO uses Go expansion notation <code class="docutils literal notranslate"><span class="pre">{x...y}</span></code> to denote a sequential series of drives when creating the new server pool, where all nodes in the server pool have an identical set of mounted drives.
+Configure drive mounting paths as a sequential series to best support this notation.
+For example, mount your drives using a pattern of <code class="docutils literal notranslate"><span class="pre">/mnt/drive-n</span></code>, where <code class="docutils literal notranslate"><span class="pre">n</span></code> starts at <code class="docutils literal notranslate"><span class="pre">1</span></code> and increments by <code class="docutils literal notranslate"><span class="pre">1</span></code> per drive.</p>
+</dd>
+<dt>Persist Drive Mounting and Mapping Across Reboots</dt><dd><p>Use <code class="docutils literal notranslate"><span class="pre">/etc/fstab</span></code> to ensure consistent drive-to-mount mapping across node reboots.</p>
+<p>Non-Linux Operating Systems should use the equivalent drive mount management tool.</p>
+</dd>
+</dl>
+<div class="warning admonition">
+<p class="admonition-title">Exclusive access to drives</p>
+<p>MinIO <strong>requires</strong> <em>exclusive</em> access to the drives or volumes provided for object storage.
+No other processes, software, scripts, or persons should perform <em>any</em> actions directly on the drives or volumes provided to MinIO or the objects or files MinIO places on them.</p>
+<p>Unless directed by MinIO Engineering, do not use scripts or tools to directly modify, delete, or move any of the data shards, parity shards, or metadata files on the provided drives, including from one drive or node to another.
+Such operations are very likely to result in widespread corruption and data loss beyond MinIO’s ability to heal.</p>
+</div>
+</section>
+<section id="minimum-drives-for-erasure-code-parity">
+<h3>Minimum Drives for Erasure Code Parity<a class="headerlink" href="#minimum-drives-for-erasure-code-parity" title="Permalink to this heading"></a></h3>
+<p>MinIO requires each pool satisfy the deployment <a class="reference internal" href="../concepts/erasure-coding.html#minio-erasure-coding"><span class="std std-ref">erasure code</span></a> settings. Specifically the new pool topology must
+support a minimum of <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">x</span> <span class="pre">EC:N</span></code> drives per
+<a class="reference internal" href="../concepts/erasure-coding.html#minio-ec-erasure-set"><span class="std std-ref">erasure set</span></a>, where <code class="docutils literal notranslate"><span class="pre">EC:N</span></code> is the
+<a class="reference internal" href="../../reference/minio-server/settings/storage-class.html#minio-ec-storage-class"><span class="std std-ref">Standard</span></a> parity storage class of the
+deployment. This requirement ensures the new server pool can satisfy the
+expected <abbr title="Service Level Agreement">SLA</abbr> of the deployment.</p>
+<p>You can use the
+<a class="reference external" href="https://min.io/product/erasure-code-calculator?ref=docs">MinIO Erasure Code Calculator</a> to check the
+<span class="guilabel">Erasure Code Stripe Size (K+M)</span> of your new pool. If the highest
+listed value is at least <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">x</span> <span class="pre">EC:N</span></code>, the pool supports the deployment’s
+erasure parity settings.</p>
+</section>
+<section id="time-synchronization">
+<h3>Time Synchronization<a class="headerlink" href="#time-synchronization" title="Permalink to this heading"></a></h3>
+<p>Multi-node systems must maintain synchronized time and date to maintain stable internode operations and interactions.
+Make sure all nodes sync to the same time server regularly.
+Operating systems vary for methods used to synchronize time and date, such as with <code class="docutils literal notranslate"><span class="pre">ntp</span></code>, <code class="docutils literal notranslate"><span class="pre">timedatectl</span></code>, or <code class="docutils literal notranslate"><span class="pre">timesyncd</span></code>.</p>
+<p>Check the documentation for your operating system for how to set up and maintain accurate and identical system clock times across nodes.</p>
+</section>
+<section id="back-up-cluster-settings-first">
+<h3>Back Up Cluster Settings First<a class="headerlink" href="#back-up-cluster-settings-first" title="Permalink to this heading"></a></h3>
+<p>Use the <a class="reference internal" href="../../reference/minio-mc-admin/mc-admin-cluster-bucket-export.html#command-mc.admin.cluster.bucket.export" title="mc.admin.cluster.bucket.export"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">admin</span> <span class="pre">cluster</span> <span class="pre">bucket</span> <span class="pre">export</span></code></a> and <a class="reference internal" href="../../reference/minio-mc-admin/mc-admin-cluster-iam-export.html#command-mc.admin.cluster.iam.export" title="mc.admin.cluster.iam.export"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">admin</span> <span class="pre">cluster</span> <span class="pre">iam</span> <span class="pre">export</span></code></a> commands to take a snapshot of the bucket metadata and IAM configurations respectively prior to starting decommissioning.
+You can use these snapshots to restore <a class="reference internal" href="../../reference/minio-mc-admin/mc-admin-cluster-bucket-import.html#minio-mc-admin-cluster-bucket-import"><span class="std std-ref">bucket</span></a> and <a class="reference internal" href="../../reference/minio-mc-admin/mc-admin-cluster-iam-import.html#minio-mc-admin-cluster-iam-import"><span class="std std-ref">IAM</span></a> settings to recover from user or process errors as necessary.</p>
+</section>
+</section>
+<section id="considerations">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Considerations</a><a class="headerlink" href="#considerations" title="Permalink to this heading"></a></h2>
+<section id="writing-files">
+<span id="minio-writing-files"></span><h3>Writing Files<a class="headerlink" href="#writing-files" title="Permalink to this heading"></a></h3>
+<p>MinIO does not automatically rebalance objects across the new server pools.
+Instead, MinIO performs new write operations to the pool with the most free
+storage weighted by the amount of free space on the pool divided by the free space across all available pools.</p>
+<p>The formula to determine the probability of a write operation on a particular pool is</p>
+<p><span class="math notranslate nohighlight">\(FreeSpaceOnPoolA / FreeSpaceOnAllPools\)</span></p>
+<p>Consider a situation where a group of three pools has a total of 10 TiB of free space distributed as:</p>
+<ul class="simple">
+<li><p>Pool A has 3 TiB of free space</p></li>
+<li><p>Pool B has 2 TiB of free space</p></li>
+<li><p>Pool C has 5 TiB of free space</p></li>
+</ul>
+<p>MinIO calculates the probability of a write operation to each of the pools as:</p>
+<ul class="simple">
+<li><p>Pool A: 30% chance (<span class="math notranslate nohighlight">\(3TiB / 10TiB\)</span>)</p></li>
+<li><p>Pool B: 20% chance (<span class="math notranslate nohighlight">\(2TiB / 10TiB\)</span>)</p></li>
+<li><p>Pool C: 50% chance (<span class="math notranslate nohighlight">\(5TiB / 10TiB\)</span>)</p></li>
+</ul>
+<p>In addition to the free space calculation, if a write option (with parity) would bring a drive
+usage above 99% or a known free inode count below 1000, MinIO does not write to the pool.</p>
+<p>If desired, you can manually initiate a rebalance procedure with <a class="reference internal" href="../../reference/minio-mc-admin/mc-admin-rebalance.html#command-mc.admin.rebalance" title="mc.admin.rebalance"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc</span> <span class="pre">admin</span> <span class="pre">rebalance</span></code></a>.
+For more about how rebalancing works, see <a class="reference internal" href="../concepts.html#minio-rebalance"><span class="std std-ref">managing objects across a deployment</span></a>.</p>
+<p>Likewise, MinIO does not write to pools in a decommissioning process.</p>
+</section>
+<section id="expansion-is-non-disruptive">
+<h3>Expansion is Non-Disruptive<a class="headerlink" href="#expansion-is-non-disruptive" title="Permalink to this heading"></a></h3>
+<p>Adding a new server pool requires restarting <em>all</em> MinIO server processes in the
+deployment at around same time.</p>
+<p>MinIO strongly recommends restarting all MinIO Server processes in a deployment simultaneously.
+MinIO operations are atomic and strictly consistent.
+As such the restart procedure is non-disruptive to applications and ongoing operations.</p>
+<p>Do <strong>not</strong> perform “rolling” (e.g. one node at a time) restarts.</p>
+</section>
+<section id="capacity-based-planning">
+<h3>Capacity-Based Planning<a class="headerlink" href="#capacity-based-planning" title="Permalink to this heading"></a></h3>
+<p>MinIO recommends planning storage capacity sufficient to store <strong>at least</strong> 2 years of data before reaching 70% usage.
+Performing <a class="reference internal" href="#expand-minio-distributed"><span class="std std-ref">server pool expansion</span></a> more frequently or on a “just-in-time” basis generally indicates an architecture or planning issue.</p>
+<p>For example, consider an application suite expected to produce at least 100 TiB of data per year and a 3 year target before expansion.
+The deployment has ~500TiB of usable storage in the initial server pool, such that the cluster safely met the 70% threshold with some buffer for data growth.
+The new server pool should <strong>ideally</strong> meet at minimum 500TiB of additional storage to allow for a similar lifespan before further expansion.</p>
+<p>Since MinIO <a class="reference internal" href="../concepts/erasure-coding.html#minio-erasure-coding"><span class="std std-ref">erasure coding</span></a> requires some storage for parity, the total <strong>raw</strong> storage must exceed the planned <strong>usable</strong> capacity.
+Consider using the MinIO <a class="reference external" href="https://min.io/product/erasure-code-calculator">Erasure Code Calculator</a> for guidance in planning capacity around specific erasure code settings.</p>
+</section>
+<section id="recommended-operating-systems">
+<h3>Recommended Operating Systems<a class="headerlink" href="#recommended-operating-systems" title="Permalink to this heading"></a></h3>
+<p>This tutorial assumes all hosts running MinIO use a <a class="reference internal" href="baremetal.html#minio-installation-platform-support"><span class="std std-ref">recommended Linux operating system</span></a>.</p>
+<p>All hosts in the deployment should run with matching <a class="reference internal" href="../checklists/software.html#minio-software-checklists"><span class="std std-ref">software configurations</span></a>.</p>
+</section>
+</section>
+<section id="expand-minio-distributed-baremetal">
+<span id="id1"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Expand a Distributed MinIO Deployment</a><a class="headerlink" href="#expand-minio-distributed-baremetal" title="Permalink to this heading"></a></h2>
+<p>The following procedure adds a <a class="reference internal" href="../concepts.html#minio-intro-server-pool"><span class="std std-ref">Server Pool</span></a>
+to an existing MinIO deployment. Each Pool expands the total available
+storage capacity of the cluster while maintaining the overall
+<a class="reference internal" href="../concepts/erasure-coding.html#minio-erasure-coding"><span class="std std-ref">availability</span></a> of the cluster.</p>
+<p>All commands provided below use example values. Replace these values with
+those appropriate for your deployment.</p>
+<p>Review the <a class="reference internal" href="#expand-minio-distributed-prereqs"><span class="std std-ref">Prerequisites</span></a> before starting this
+procedure.</p>
+<p>Complete any planned hardware expansion prior to <a class="reference internal" href="baremetal-decommission-server-pool.html#minio-decommissioning"><span class="std std-ref">decommissioning older hardware pools</span></a>.</p>
+<section id="install-the-minio-binary-on-each-node-in-the-new-server-pool">
+<h3>1) Install the MinIO Binary on Each Node in the New Server Pool<a class="headerlink" href="#install-the-minio-binary-on-each-node-in-the-new-server-pool" title="Permalink to this heading"></a></h3>
+<p>The following tabs provide examples of installing MinIO onto 64-bit Linux operating systems using RPM, DEB, or binary.
+The RPM and DEB packages automatically install MinIO to the necessary system paths and create a <code class="docutils literal notranslate"><span class="pre">minio</span></code> service for <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>.
+MinIO strongly recommends using the RPM or DEB installation routes.
+To update deployments managed using <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>, see <a class="reference internal" href="baremetal-upgrade-minio-deployment.html#minio-upgrade-systemctl"><span class="std std-ref">Update systemctl-Managed MinIO Deployments</span></a>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3" open="open">
+<summary class="sd-summary-title sd-card-header">
+amd64 (Intel or AMD 64-bit processors)<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Use one of the following options to download the MinIO server installation file for a machine running Linux on an Intel or AMD 64-bit processor.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" data-sync-id="rpm" for="sd-tab-item-0">
+RPM (RHEL)</label><div class="sd-tab-content docutils">
+<p class="sd-card-text">Use the following commands to download the latest stable MinIO RPM and
+install it.</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>RPMURL<span class="w"> </span>-O<span class="w"> </span>minio.rpm
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>minio.rpm
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" data-sync-id="deb" for="sd-tab-item-1">
+DEB (Debian/Ubuntu)</label><div class="sd-tab-content docutils">
+<p class="sd-card-text">Use the following commands to download the latest stable MinIO DEB and
+install it:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>DEBURL<span class="w"> </span>-O<span class="w"> </span>minio.deb
+sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>minio.deb
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" data-sync-id="binary" for="sd-tab-item-2">
+Binary</label><div class="sd-tab-content docutils">
+<p class="sd-card-text">Use the following commands to download the latest stable MinIO binary and
+install it to the system <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod<span class="w"> </span>+x<span class="w"> </span>minio
+sudo<span class="w"> </span>mv<span class="w"> </span>minio<span class="w"> </span>/usr/local/bin/
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+arm64 (ARM 64-bit processors)<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Use one of the following options to download the MinIO server installation file for a machine running Linux on an ARM 64-bit processor.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" data-sync-id="rpm" for="sd-tab-item-3">
+RPM (RHEL)</label><div class="sd-tab-content docutils">
+<p class="sd-card-text">Use the following commands to download the latest stable MinIO RPM and
+install it.</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span><span class="p">|</span>minio-rpmarm64<span class="p">|</span><span class="w"> </span>-O<span class="w"> </span>minio.rpm
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>minio.rpm
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" data-sync-id="deb" for="sd-tab-item-4">
+DEB (Debian/Ubuntu)</label><div class="sd-tab-content docutils">
+<p class="sd-card-text">Use the following commands to download the latest stable MinIO DEB and
+install it:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span><span class="p">|</span>minio-debarm64<span class="p">|</span><span class="w"> </span>-O<span class="w"> </span>minio.deb
+sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>minio.deb
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-1" type="radio">
+</input><label class="sd-tab-label" data-sync-id="binary" for="sd-tab-item-5">
+Binary</label><div class="sd-tab-content docutils">
+<p class="sd-card-text">Use the following commands to download the latest stable MinIO binary and
+install it to the system <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://dl.min.io/server/minio/release/linux-arm64/minio
+chmod<span class="w"> </span>+x<span class="w"> </span>minio
+<span class="nv">MINIO_ROOT_USER</span><span class="o">=</span>admin<span class="w"> </span><span class="nv">MINIO_ROOT_PASSWORD</span><span class="o">=</span>password<span class="w"> </span>./minio<span class="w"> </span>server<span class="w"> </span>/mnt/data<span class="w"> </span>--console-address<span class="w"> </span><span class="s2">&quot;:9001&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+Other Architectures<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">MinIO also supports additional architectures:</p>
+<ul class="simple">
+<li><p class="sd-card-text">ppc64le</p></li>
+<li><p class="sd-card-text">s390x</p></li>
+</ul>
+<p class="sd-card-text">For instructions to download the binary, RPM, or DEB files for those architectures, see the <a class="reference external" href="https://min.io/download#/linux?ref=docs-install">MinIO download page</a>.</p>
+</div>
+</details></section>
+<section id="add-tls-ssl-certificates">
+<h3>2) Add TLS/SSL Certificates<a class="headerlink" href="#add-tls-ssl-certificates" title="Permalink to this heading"></a></h3>
+<p>MinIO enables <a class="reference internal" href="../network-encryption.html#minio-tls"><span class="std std-ref">Transport Layer Security (TLS)</span></a> 1.2+
+automatically upon detecting a valid x.509 certificate (<code class="docutils literal notranslate"><span class="pre">.crt</span></code>) and
+private key (<code class="docutils literal notranslate"><span class="pre">.key</span></code>) in the MinIO <code class="docutils literal notranslate"><span class="pre">${HOME}/.minio/certs</span></code> directory.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">systemd</span></code>-managed deployments, use the <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory for the
+user which runs the MinIO server process. The provided <code class="docutils literal notranslate"><span class="pre">minio.service</span></code>
+file runs the process as <code class="docutils literal notranslate"><span class="pre">minio-user</span></code>. The previous step includes instructions
+for creating this user with a home directory <code class="docutils literal notranslate"><span class="pre">/home/minio-user</span></code>.</p>
+<ul class="simple">
+<li><p>Place TLS certificates into <code class="docutils literal notranslate"><span class="pre">/home/minio-user/.minio/certs</span></code> on each host.</p></li>
+<li><p>If <em>any</em> MinIO server or client uses certificates signed by an unknown
+Certificate Authority (self-signed or internal CA), you <em>must</em> place the CA
+certs in the <code class="docutils literal notranslate"><span class="pre">/home/minio-user/.minio/certs/CAs</span></code> on all MinIO hosts in the
+deployment. MinIO rejects invalid certificates (untrusted, expired, or
+malformed).</p></li>
+</ul>
+<p>If the <code class="docutils literal notranslate"><span class="pre">minio.service</span></code> file specifies a different user account, use the
+<code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory for that account. Alternatively, specify a custom
+certificate directory using the <a class="reference internal" href="../../reference/minio-server/minio-server.html#minio.server.-certs-dir" title="minio.server.--certs-dir"><code class="xref minio minio-mc-cmd docutils literal notranslate"><span class="pre">minio</span> <span class="pre">server</span> <span class="pre">--certs-dir</span></code></a>
+commandline argument. Modify the <code class="docutils literal notranslate"><span class="pre">MINIO_OPTS</span></code> variable in
+<code class="docutils literal notranslate"><span class="pre">/etc/default/minio</span></code> to set this option. The <code class="docutils literal notranslate"><span class="pre">systemd</span></code> user which runs the
+MinIO server process <em>must</em> have read and listing permissions for the specified
+directory.</p>
+<p>For more specific guidance on configuring MinIO for TLS, including multi-domain
+support via Server Name Indication (SNI), see <a class="reference internal" href="../network-encryption.html#minio-tls"><span class="std std-ref">Network Encryption (TLS)</span></a>. You can
+optionally skip this step to deploy without TLS enabled. MinIO strongly
+recommends <em>against</em> non-TLS deployments outside of early development.</p>
+</section>
+<section id="create-the-systemd-service-file">
+<h3>3) Create the <code class="docutils literal notranslate"><span class="pre">systemd</span></code> Service File<a class="headerlink" href="#create-the-systemd-service-file" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">.deb</span></code> or <code class="docutils literal notranslate"><span class="pre">.rpm</span></code> packages install the following <a class="reference external" href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a> service file to <code class="docutils literal notranslate"><span class="pre">/usr/lib/systemd/system/minio.service</span></code>.
+For binary installations, create this file manually on all MinIO hosts.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">systemd</span></code> checks the <code class="docutils literal notranslate"><span class="pre">/etc/systemd/...</span></code> path before checking the <code class="docutils literal notranslate"><span class="pre">/usr/lib/systemd/...</span></code> path and uses the first file it finds.
+To avoid conflicting or unexpected configuration options, check that the file only exists at the <code class="docutils literal notranslate"><span class="pre">/usr/lib/systemd/system/minio.service</span></code> path.</p>
+<p>Refer to the <a class="reference external" href="https://www.man7.org/linux/man-pages/man5/systemd.unit.5.html">man page for systemd.unit</a> for details on the file path search order.</p>
+</div>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>MinIO
+<span class="nv">Documentation</span><span class="o">=</span>https://docs.min.io/community/minio-object-store/index.html
+<span class="nv">Wants</span><span class="o">=</span>network-online.target
+<span class="nv">After</span><span class="o">=</span>network-online.target
+<span class="nv">AssertFileIsExecutable</span><span class="o">=</span>/usr/local/bin/minio
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">WorkingDirectory</span><span class="o">=</span>/usr/local
+
+<span class="nv">User</span><span class="o">=</span>minio-user
+<span class="nv">Group</span><span class="o">=</span>minio-user
+<span class="nv">ProtectProc</span><span class="o">=</span>invisible
+
+<span class="nv">EnvironmentFile</span><span class="o">=</span>-/etc/default/minio
+<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;if [ -z \&quot;</span><span class="si">${</span><span class="nv">MINIO_VOLUMES</span><span class="si">}</span><span class="s2">\&quot; ]; then echo \&quot;Variable MINIO_VOLUMES not set in /etc/default/minio\&quot;; exit 1; fi&quot;</span>
+<span class="nv">ExecStart</span><span class="o">=</span>/usr/local/bin/minio<span class="w"> </span>server<span class="w"> </span><span class="nv">$MINIO_OPTS</span><span class="w"> </span><span class="nv">$MINIO_VOLUMES</span>
+
+<span class="c1"># MinIO RELEASE.2023-05-04T21-44-30Z adds support for Type=notify (https://www.freedesktop.org/software/systemd/man/systemd.service.html#Type=)</span>
+<span class="c1"># This may improve systemctl setups where other services use `After=minio.server`</span>
+<span class="c1"># Uncomment the line to enable the functionality</span>
+<span class="c1"># Type=notify</span>
+
+<span class="c1"># Let systemd restart this service always</span>
+<span class="nv">Restart</span><span class="o">=</span>always
+
+<span class="c1"># Specifies the maximum file descriptor number that can be opened by this process</span>
+<span class="nv">LimitNOFILE</span><span class="o">=</span><span class="m">65536</span>
+
+<span class="c1"># Specifies the maximum number of threads this process can create</span>
+<span class="nv">TasksMax</span><span class="o">=</span>infinity
+
+<span class="c1"># Disable timeout logic and wait until process is stopped</span>
+<span class="nv">TimeoutStopSec</span><span class="o">=</span>infinity
+<span class="nv">SendSIGKILL</span><span class="o">=</span>no
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+
+<span class="c1"># Built for ${project.name}-${project.version} (${project.name})</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">minio.service</span></code> file runs as the <code class="docutils literal notranslate"><span class="pre">minio-user</span></code> User and Group by default.
+You can create the user and group using the <code class="docutils literal notranslate"><span class="pre">groupadd</span></code> and <code class="docutils literal notranslate"><span class="pre">useradd</span></code>
+commands. The following example creates the user, group, and sets permissions
+to access the folder paths intended for use by MinIO. These commands typically
+require root (<code class="docutils literal notranslate"><span class="pre">sudo</span></code>) permissions.</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>groupadd<span class="w"> </span>-r<span class="w"> </span>minio-user
+useradd<span class="w"> </span>-M<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>minio-user<span class="w"> </span>minio-user
+chown<span class="w"> </span>minio-user:minio-user<span class="w"> </span>/mnt/disk1<span class="w"> </span>/mnt/disk2<span class="w"> </span>/mnt/disk3<span class="w"> </span>/mnt/disk4
+</pre></div>
+</div>
+<p>The specified drive paths are provided as an example. Change them to match
+the path to those drives intended for use by MinIO.</p>
+<p>Alternatively, change the <code class="docutils literal notranslate"><span class="pre">User</span></code> and <code class="docutils literal notranslate"><span class="pre">Group</span></code> values to another user and
+group on the system host with the necessary access and permissions.</p>
+<p>MinIO publishes additional startup script examples on
+<a class="reference external" href="https://github.com/minio/minio-service">github.com/minio/minio-service</a>.</p>
+<p>To update deployments managed using <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>, see <a class="reference internal" href="baremetal-upgrade-minio-deployment.html#minio-upgrade-systemctl"><span class="std std-ref">Update systemctl-Managed MinIO Deployments</span></a>.</p>
+</section>
+<section id="create-the-service-environment-file">
+<h3>4) Create the Service Environment File<a class="headerlink" href="#create-the-service-environment-file" title="Permalink to this heading"></a></h3>
+<p>Create an environment file at <code class="docutils literal notranslate"><span class="pre">/etc/default/minio</span></code>. The MinIO
+service uses this file as the source of all
+<a class="reference internal" href="../../reference/minio-server/settings.html#minio-server-environment-variables"><span class="std std-ref">environment variables</span></a> used by
+MinIO <em>and</em> the <code class="docutils literal notranslate"><span class="pre">minio.service</span></code> file.</p>
+<p>The following examples assumes that:</p>
+<ul>
+<li><p>The deployment has a single server pool consisting of four MinIO server hosts
+with sequential hostnames.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>minio1.example.com<span class="w">   </span>minio3.example.com
+minio2.example.com<span class="w">   </span>minio4.example.com
+</pre></div>
+</div>
+<p>Each host has 4 locally attached drives with
+sequential mount points:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>/mnt/disk1/minio<span class="w">   </span>/mnt/disk3/minio
+/mnt/disk2/minio<span class="w">   </span>/mnt/disk4/minio
+</pre></div>
+</div>
+</li>
+<li><p>The new server pool consists of eight new MinIO hosts with sequential
+hostnames:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>minio5.example.com<span class="w">   </span>minio9.example.com
+minio6.example.com<span class="w">   </span>minio10.example.com
+minio7.example.com<span class="w">   </span>minio11.example.com
+minio8.example.com<span class="w">   </span>minio12.example.com
+</pre></div>
+</div>
+</li>
+<li><p>All hosts have eight locally-attached drives with sequential mount-points:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>/mnt/disk1/minio<span class="w">  </span>/mnt/disk5/minio
+/mnt/disk2/minio<span class="w">  </span>/mnt/disk6/minio
+/mnt/disk3/minio<span class="w">  </span>/mnt/disk7/minio
+/mnt/disk4/minio<span class="w">  </span>/mnt/disk8/minio
+</pre></div>
+</div>
+</li>
+<li><p>The deployment has a load balancer running at <code class="docutils literal notranslate"><span class="pre">https://minio.example.net</span></code>
+that manages connections across all MinIO hosts. The load balancer should
+not be routing requests to the new hosts at this step, but should have
+the necessary configuration updates planned.</p></li>
+</ul>
+<p>Modify the example to reflect your deployment topology:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the hosts and volumes MinIO uses at startup</span>
+<span class="c1"># The command uses MinIO expansion notation {x...y} to denote a</span>
+<span class="c1"># sequential series.</span>
+<span class="c1">#</span>
+<span class="c1"># The following example starts the MinIO server with two server pools.</span>
+<span class="c1">#</span>
+<span class="c1"># The space delimiter indicates a seperate server pool</span>
+<span class="c1">#</span>
+<span class="c1"># The second set of hostnames and volumes is the newly added pool.</span>
+<span class="c1"># The pool has sufficient stripe size to meet the existing erasure code</span>
+<span class="c1"># parity of the deployment (2 x EC:4)</span>
+<span class="c1">#</span>
+<span class="c1"># The command includes the port on which the MinIO servers listen for each</span>
+<span class="c1"># server pool.</span>
+
+<span class="nv">MINIO_VOLUMES</span><span class="o">=</span><span class="s2">&quot;https://minio{1...4}.example.net:9000/mnt/disk{1...4}/minio https://minio{5...12}.example.net:9000/mnt/disk{1...8}/minio&quot;</span>
+
+<span class="c1"># Set all MinIO server options</span>
+<span class="c1">#</span>
+<span class="c1"># The following explicitly sets the MinIO Console listen address to</span>
+<span class="c1"># port 9001 on all network interfaces. The default behavior is dynamic</span>
+<span class="c1"># port selection.</span>
+
+<span class="nv">MINIO_OPTS</span><span class="o">=</span><span class="s2">&quot;--console-address :9001&quot;</span>
+
+<span class="c1"># Set the root username. This user has unrestricted permissions to</span>
+<span class="c1"># perform S3 and administrative API operations on any resource in the</span>
+<span class="c1"># deployment.</span>
+<span class="c1">#</span>
+<span class="c1"># Defer to your organizations requirements for superadmin user name.</span>
+
+<span class="nv">MINIO_ROOT_USER</span><span class="o">=</span>minioadmin
+
+<span class="c1"># Set the root password</span>
+<span class="c1">#</span>
+<span class="c1"># Use a long, random, unique string that meets your organizations</span>
+<span class="c1"># requirements for passwords.</span>
+
+<span class="nv">MINIO_ROOT_PASSWORD</span><span class="o">=</span>minio-secret-key-CHANGE-ME
+</pre></div>
+</div>
+<p>You may specify other <a class="reference internal" href="../../reference/minio-server/settings.html#minio-server-environment-variables"><span class="std std-ref">environment variables</span></a> or server commandline options as required
+by your deployment. All MinIO nodes in the deployment should include the same
+environment variables with the matching values.</p>
+</section>
+<section id="restart-the-minio-deployment-with-expanded-configuration">
+<h3>5) Restart the MinIO Deployment with Expanded Configuration<a class="headerlink" href="#restart-the-minio-deployment-with-expanded-configuration" title="Permalink to this heading"></a></h3>
+<p>Issue the following commands on each node <strong>simultaneously</strong> in the deployment
+to restart the MinIO service:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>minio.service
+</pre></div>
+</div>
+<p>Use the following commands to confirm the service is online and functional:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>minio.service
+journalctl<span class="w"> </span>-f<span class="w"> </span>-u<span class="w"> </span>minio.service
+</pre></div>
+</div>
+<p>MinIO may log an increased number of non-critical warnings while the
+server processes connect and synchronize. These warnings are typically
+transient and should resolve as the deployment comes online.</p>
+<p>MinIO strongly recommends restarting all MinIO Server processes in a deployment simultaneously.
+MinIO operations are atomic and strictly consistent.
+As such the restart procedure is non-disruptive to applications and ongoing operations.</p>
+<p>Do <strong>not</strong> perform “rolling” (e.g. one node at a time) restarts.</p>
+</section>
+<section id="next-steps">
+<h3>6) Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Update any load balancers, reverse proxies, or other network control planes
+to route client requests to the new hosts in the MinIO distributed deployment.
+While MinIO automatically manages routing internally, having the control
+planes handle initial connection management may reduce network hops and
+improve efficiency.</p></li>
+<li><p>Review the <a class="reference internal" href="../../administration/minio-console.html#minio-console"><span class="std std-ref">MinIO Console</span></a> to confirm the updated
+cluster topology and monitor performance.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

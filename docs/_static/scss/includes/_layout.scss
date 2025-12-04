@@ -1,0 +1,76 @@
+
+:root {
+    --content-padding: 1.75rem;
+  
+    @include breakpoint-max(breakpoints(lg)) {
+      --content-padding: 1.25rem;
+    }
+
+    &.locked {
+        &,
+        body,
+        .content {
+            overflow: hidden;
+        }
+    }
+}
+
+.content {
+    flex: 1;
+
+    @include breakpoint-min(breakpoints(lg)) {
+		& > .container {
+            display: flex;
+        }
+	}
+}
+
+.content__main {
+    flex: 1;
+    min-width: 0;
+    padding: var(--content-padding);
+}
+
+.container { 
+    margin: 0 auto;
+    padding: 0 var(--content-padding);
+    width: 100%;
+}
+
+:root {
+    &:not(.read-mode) {
+        .container {
+            max-width: $container-width;
+        }
+    }
+
+    &.read-mode {
+        .content {
+            @include breakpoint-min(breakpoints(lg)) { 
+                overflow: auto;
+                scroll-padding: 2rem;
+            }
+
+            & > .container {
+                padding-inline: 0;
+            }
+        }
+    }
+}
+
+// Keep only the main content when the page is loaded inside an iframe.
+// Currently we load certain pages inside iframes for PathFactory analytics.
+.inside-iframe {
+    .header,
+    .sidebar {
+        display: none;
+    }
+
+    .content {
+        height: 100vh;
+    }
+
+    .content__main {
+        padding-left: var(--content-padding);
+    }
+}

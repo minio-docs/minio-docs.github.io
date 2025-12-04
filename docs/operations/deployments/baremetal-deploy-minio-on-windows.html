@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Deploy MinIO on Windows &#8212; MinIO Object Storage (AGPLv3)</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script defer="defer" src="../../_static/js/main.js"></script>
+    <script defer="defer" src="../../_static/js/instantSearch.js"></script>
+    <link rel="canonical" href="https://docs.min.io/community/minio-object-store/operations/deployments/baremetal-deploy-minio-on-windows.html" />
+    <link rel="icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Upgrade a MinIO Deployment" href="baremetal-upgrade-minio-deployment.html" />
+    <link rel="prev" title="Deploy MinIO on MacOS" href="baremetal-deploy-minio-on-macos.html" /><meta name="pagename" content="operations/deployments/baremetal-deploy-minio-on-windows"/>
+
+<!-- Preload fonts and scripts -->
+<link rel="preload" href="../../_static/fonts/inter/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../_static/fonts/inter/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../_static/fonts/inter/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://E1CSOK3UC2-dsn.algolia.net" crossorigin />
+
+<!-- Google Tag Manager: docs.min.io -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-56L9FLVL');</script>
+
+<!-- Google Tag Manager: main -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TWQNHTD');
+</script>
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-56860620-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<!-- Linkedin -->
+<script>
+    _linkedin_partner_id = "1153348";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+
+    (function(l) {
+    if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q=[]}
+    var s = document.getElementsByTagName("script")[0];
+    var b = document.createElement("script");
+    b.type = "text/javascript";b.async = true;
+    b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+
+<!-- Leadfeeder -->
+<script>
+    (function(){
+        window.ldfdr = window.ldfdr || {};
+        (function(d, s, ss, fs){
+        fs = d.getElementsByTagName(s)[0];
+        function ce(src){
+            var cs  = d.createElement(s);
+            cs.src = src;
+            setTimeout(function(){fs.parentNode.insertBefore(cs,fs)}, 1);
+        }
+        ce(ss);
+        })(document, 'script', 'https://sc.lfeeder.com/lftracker_v1_DzLR5a5kKJA7BoQ2.js');
+    })();
+</script>
+   
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+
+  </head><body><!-- Google Tag Manager: docs.min.io (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56L9FLVL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><header class="header inactive">
+   <div class="container">
+      <div class="header__inner">
+         <a href="https://min.io?jmp=docs-minio-object-store" class="header__logo">
+            <svg viewBox="0 0 162.612 24.465">
+               <path d="M52.751.414h9.108v23.63h-9.108zM41.711.74l-18.488 9.92a.919.919 0 0 1-.856 0L3.879.74A2.808 2.808 0 0 0 2.558.414h-.023A2.4 2.4 0 0 0 0 2.641v21.376h9.1V13.842a.918.918 0 0 1 1.385-.682l10.361 5.568a3.634 3.634 0 0 0 3.336.028l10.933-5.634a.917.917 0 0 1 1.371.69v10.205h9.1V2.641A2.4 2.4 0 0 0 43.055.414h-.023a2.808 2.808 0 0 0-1.321.326zm65.564-.326h-9.237v10.755a.913.913 0 0 1-1.338.706L72.762.675a2.824 2.824 0 0 0-1.191-.261h-.016a2.4 2.4 0 0 0-2.535 2.227v21.377h9.163V13.275a.914.914 0 0 1 1.337-.707l24.032 11.2a2.813 2.813 0 0 0 1.188.26 2.4 2.4 0 0 0 2.535-2.227zm7.161 23.63V.414h4.191v23.63zm28.856.421c-11.274 0-19.272-4.7-19.272-12.232C124.02 4.741 132.066 0 143.292 0s19.32 4.7 19.32 12.233-7.902 12.232-19.32 12.232zm0-21.333c-8.383 0-14.84 3.217-14.84 9.1 0 5.926 6.457 9.1 14.84 9.1s14.887-3.174 14.887-9.1c0-5.883-6.504-9.1-14.887-9.1z" />
+            </svg>
+         </a>
+         
+         <!--
+         <div class="header__actions">
+            
+
+            <button id="dark-mode-toggle" type="button" class="icon icon--switch"><svg width="21" height="21" viewBox="0 0 48 48" fill="currentColor">
+    <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-6.75 3.975-11.45Q13.95 7.85 20.4 6.5q2.05-.4 2.8.7t-.05 3q-.45 1.15-.7 2.35-.25 1.2-.25 2.45 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q1.25 0 2.425-.225 1.175-.225 2.275-.625 2.15-.8 3.2.075 1.05.875.55 2.975-1.35 6.05-6.05 10.025Q30.7 42 24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z" />
+</svg><svg width="17" height="17" viewBox="0 0 17 17">
+    <path d="M8.5 2.898c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415V.58c0-.167.055-.306.164-.415S8.333 0 8.5 0s.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415s-.248.164-.415.164zm3.96 1.642c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.217-1.236c.116-.116.254-.174.415-.174s.299.058.415.174.174.251.174.406-.058.29-.174.406L13.272 4.54c-.116.116-.251.174-.406.174s-.29-.058-.406-.174zm2.222 4.54c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164S17 8.333 17 8.5s-.055.306-.164.415-.248.164-.415.164h-1.739zM8.5 17c-.167 0-.306-.055-.415-.164s-.164-.248-.164-.415v-1.739c0-.167.055-.306.164-.415s.248-.164.415-.164.306.055.415.164.164.248.164.415v1.739c0 .167-.055.306-.164.415S8.667 17 8.5 17zM3.728 4.54L2.492 3.323c-.116-.116-.174-.254-.174-.415s.058-.299.174-.415.251-.174.406-.174.29.058.406.174L4.54 3.728c.116.116.174.251.174.406s-.058.29-.174.406c-.116.103-.254.155-.415.155s-.293-.052-.396-.155zm9.968 9.968l-1.236-1.236c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406c.103-.103.235-.155.396-.155s.299.052.415.155l1.256 1.217c.116.116.171.254.164.415s-.061.299-.164.415c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM.58 9.08c-.167 0-.306-.055-.415-.164S0 8.667 0 8.5s.055-.306.164-.415.248-.164.415-.164h1.739c.167 0 .306.055.415.164s.164.248.164.415-.055.306-.164.415-.248.164-.415.164H.58zm1.912 5.428c-.116-.116-.174-.251-.174-.406s.058-.29.174-.406l1.236-1.236c.103-.103.235-.155.396-.155s.299.052.415.155c.116.116.174.254.174.415s-.058.299-.174.415l-1.217 1.217c-.116.116-.254.174-.415.174s-.299-.058-.415-.174h0zM8.5 13.136a4.47 4.47 0 0 1-3.284-1.352A4.47 4.47 0 0 1 3.864 8.5a4.47 4.47 0 0 1 1.352-3.284A4.47 4.47 0 0 1 8.5 3.864a4.47 4.47 0 0 1 3.284 1.352A4.47 4.47 0 0 1 13.136 8.5a4.47 4.47 0 0 1-1.352 3.284A4.47 4.47 0 0 1 8.5 13.136zm0-1.159a3.35 3.35 0 0 0 2.463-1.014A3.35 3.35 0 0 0 11.977 8.5a3.35 3.35 0 0 0-1.014-2.463A3.35 3.35 0 0 0 8.5 5.023a3.35 3.35 0 0 0-2.463 1.014A3.35 3.35 0 0 0 5.023 8.5a3.35 3.35 0 0 0 1.014 2.463A3.35 3.35 0 0 0 8.5 11.977z" fill="currentColor" />
+</svg>
+               Dark Mode
+            </button>
+         </div>
+         -->
+      </div>
+  
+      <h2 class="header__title hidden-rm">Documentation</h2>
+
+      
+
+      <!--<div class="platform-nav">
+    <div class="platform-nav__main">
+        <div class="container">
+        </div>
+        <button type="button" class="icon search-toggle search-toggle--keyboard visible-rm"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg>
+            Search
+        </button>
+    </div>
+</div> -->
+         <div id="search">
+            <div class="search__inner">
+               <div id="search-box"></div>
+               
+               <div class="search__dropdown">
+                  <div id="search-filters"></div>
+                  <div id="search-clear"></div>
+                  <div id="search-results"></div>
+                  <div id="search-powered-by"></div>
+               </div>
+            </div>
+         </div>
+   </div>
+ </header>
+   <section class="content">
+      <div class="container">
+         <div class="sidebar inactive scrollbar">
+            <div class="hide-aside visible-rm">
+               <button type="button" class="icon"><svg width="12" height="12">
+    <path d="M11.253 1.691L10.125.563 5.653 5.035 1.181.563.053 1.691l4.472 4.472-4.472 4.472 1.128 1.128 4.472-4.472 4.472 4.472 1.128-1.128-4.472-4.472z" fill-rule="evenodd"/>
+</svg>
+                     Close Doc Navigation
+               </button>
+            </div>
+
+            <a class="sidebar__title" href="../../index.html">MinIO Object Storage</a>
+            
+            
+      <nav
+         class="docs"
+         role="navigation"
+      >
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="installation.html">Installation and Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="kubernetes.html">Deploy MinIO on Kubernetes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="baremetal.html">Deploy MinIO on Baremetal</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="baremetal-deploy-minio-server.html">Install the MinIO Server</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="baremetal-deploy-minio-on-redhat-linux.html">Deploy MinIO on RedHat Linux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="baremetal-deploy-minio-on-ubuntu-linux.html">Deploy MinIO on Ubuntu Linux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="baremetal-deploy-minio-as-a-container.html">Deploy MinIO as a Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="baremetal-deploy-minio-on-macos.html">Deploy MinIO on MacOS</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Deploy MinIO on Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-upgrade-minio-deployment.html">Upgrade a MinIO Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-expand-minio-deployment.html">Expand a Distributed MinIO Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-decommission-server-pool.html">Decommission Server Pools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="baremetal-migrate-fs-gateway.html">Migrate from Gateway or Filesystem Mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../replication/multi-site-replication.html">Site Replication Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Core Operational Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../monitoring.html">Monitoring and Alerts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../external-iam.html">External Identity Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../server-side-encryption.html">Data Encryption (SSE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../network-encryption.html">Network Encryption (TLS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../checklists.html">Deployment Checklists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data-recovery.html">Recover after Hardware Failure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/minio-console.html">MinIO Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/object-management.html">Object Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/monitoring.html">Monitoring Bucket and Object Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/identity-access-management.html">Identity and Access Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/server-side-encryption.html">Server-Side Encryption of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/bucket-replication.html">Bucket Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/batch-framework.html">Batch Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../administration/concepts.html">Core Administration Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/minio-drivers.html">Software Development Kits (SDK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/security-token-service.html">Security Token Service (STS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/transforms-with-object-lambda.html">Transforms with Object Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers/file-transfer-protocol.html">File Transfer Protocol (FTP/SFTP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/kubernetes.html">Kubernetes Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/baremetal.html">Baremetal Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/s3-api-compatibility.html">S3 API Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../integrations/integrations.html">Integrations</a></li>
+</ul>
+
+      </nav>
+         </div><div class="content__toc scrollbar scrollbar--hover">
+  	<button data-aside-toggle="doc" class="icon" type="button"><svg width="17" height="13" viewbox="0 0 17 13">
+    <path d="M16.034 0H.966C.433 0 0 .346 0 .773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773S16.567 0 16.034 0zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773zm0 5.409H.966c-.533 0-.966.346-.966.773s.433.773.966.773h15.068c.533 0 .966-.346.966-.773s-.433-.773-.966-.773z" />
+</svg> TOC Menu
+  	</button>
+
+  	<div id="content-toc"></div>
+		<button class="icon search-toggle" type="button"><svg width="14" height="15">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.5a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm-1.59 5.535a6.5 6.5 0 1 1 1.179-.931l1.845 2.096a.75.75 0 0 1-1.127.99L9.91 12.036Z"/>
+</svg> Search
+		</button>
+</div>
+
+         <div class="content__main">
+            <div class="content__body">
+               
+  <section id="deploy-minio-on-windows">
+<span id="deploy-minio-windows"></span><h1>Deploy MinIO on Windows<a class="headerlink" href="#deploy-minio-on-windows" title="Permalink to this heading"></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#considerations" id="id1">Considerations</a></p></li>
+<li><p><a class="reference internal" href="#procedure" id="id2">Procedure</a></p></li>
+</ul>
+</nav>
+<div class="extlinks-video docutils container">
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.youtube.com/playlist?list=PLFOIsHSSYIK3WitnqhqfpeZ6fRFKHxIr7">Object Storage Essentials</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=yUR4Fvx0D3E&amp;list=PLFOIsHSSYIK3Dd3Y_x7itJT1NUKT5SxDh&amp;index=5">How to Connect to MinIO with JavaScript</a></p></li>
+</ul>
+</div>
+<p>This page documents deploying MinIO onto Microsoft Windows hosts.</p>
+<p>MinIO officially supports Windows operating systems in the Active Support of the Microsoft Modern Lifecycle Policy.</p>
+<p>At the time of writing, that includes:</p>
+<ul class="simple">
+<li><p>Windows Server 23H2 (<strong>Recommended</strong>)</p></li>
+<li><p>Windows Server 2022 LTSC</p></li>
+<li><p>Windows 11 Enterprise/Workstation 23H2</p></li>
+<li><p>Windows 11 Enterprise/Workstation 22H2</p></li>
+<li><p>Windows 10 Enterprise 21H2 (LTS)</p></li>
+<li><p>Windows 10 IoT 21H2 (LTS)</p></li>
+<li><p>Windows 10 Enterprise 22H2</p></li>
+</ul>
+<p>MinIO <em>may</em> run on older or out-of-support Windows releases, with limited support or troubleshooting from either MinIO or Microsoft.</p>
+<p>The procedure includes guidance for deploying Single-Node Multi-Drive (SNMD) and Single-Node Single-Drive (SNSD) topologies in support of early development and evaluation environments.</p>
+<p>MinIO does not officially support Multi-Node Multi-Drive (MNMD) “Distributed” configurations on Windows hosts.</p>
+<section id="considerations">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Considerations</a><a class="headerlink" href="#considerations" title="Permalink to this heading"></a></h2>
+<section id="review-checklists">
+<h3>Review Checklists<a class="headerlink" href="#review-checklists" title="Permalink to this heading"></a></h3>
+<p>Ensure you have reviewed our published Hardware, Software, and Security checklists before attempting this procedure.</p>
+</section>
+<section id="erasure-coding-parity">
+<h3>Erasure Coding Parity<a class="headerlink" href="#erasure-coding-parity" title="Permalink to this heading"></a></h3>
+<p>MinIO automatically determines the default <a class="reference internal" href="../concepts/erasure-coding.html#minio-erasure-coding"><span class="std std-ref">erasure coding</span></a> configuration for the cluster based on the total number of nodes and drives in the topology.
+You can configure the per-object <a class="reference internal" href="../../glossary.html#term-parity"><span class="xref std std-term">parity</span></a> setting when you set up the cluster <em>or</em> let MinIO select the default (<code class="docutils literal notranslate"><span class="pre">EC:4</span></code> for production-grade clusters).</p>
+<p>Parity controls the relationship between object availability and storage on disk.
+Use the MinIO <a class="reference external" href="https://min.io/product/erasure-code-calculator">Erasure Code Calculator</a> for guidance in selecting the appropriate erasure code parity level for your cluster.</p>
+<p>While you can change erasure parity settings at any time, objects written with a given parity do <strong>not</strong> automatically update to the new parity settings.</p>
+</section>
+</section>
+<section id="procedure">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Procedure</a><a class="headerlink" href="#procedure" title="Permalink to this heading"></a></h2>
+<section id="download-the-minio-binary">
+<h3>1. Download the MinIO Binary<a class="headerlink" href="#download-the-minio-binary" title="Permalink to this heading"></a></h3>
+<p>Download the MinIO executable from the following URL:</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>https://dl.min.io/server/minio/release/windows-amd64/minio.exe
+</pre></div>
+</div>
+<p>The next step includes instructions for running the executable.
+You cannot run the executable from the Explorer or by double clicking the file.
+Instead, you call the executable to launch the server.</p>
+</section>
+<section id="launch-the-minio-server">
+<h3>2. Launch the MinIO Server<a class="headerlink" href="#launch-the-minio-server" title="Permalink to this heading"></a></h3>
+<p>In PowerShell or the Command Prompt, navigate to the location of the executable or add the path of the <code class="docutils literal notranslate"><span class="pre">minio.exe</span></code> file to the system <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.
+computer.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-0">
+Multi-Drive</label><div class="sd-tab-content docutils">
+<p>For Windows hosts with multiple drives, you can specify a sequential set of drives to use for configuring MinIO in the Single-Node Multi-Drive (SNMD) topology:</p>
+<div class="copyable highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span>\<span class="n">minio</span><span class="o">.</span><span class="n">exe</span> <span class="n">server</span> <span class="p">{</span><span class="n">D</span><span class="o">...</span><span class="n">G</span><span class="p">}:</span>\<span class="n">minio</span> <span class="o">--</span><span class="n">console</span><span class="o">-</span><span class="n">address</span> <span class="p">:</span><span class="mi">9001</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../reference/minio-server/minio-server.html#command-minio.server" title="minio.server"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">minio</span> <span class="pre">server</span></code></a> process prints its output to the system console, similar to the following:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>API:<span class="w"> </span>http://192.0.2.10:9000<span class="w">  </span>http://127.0.0.1:9000
+RootUser:<span class="w"> </span>minioadmin
+RootPass:<span class="w"> </span>minioadmin
+
+Console:<span class="w"> </span>http://192.0.2.10:9001<span class="w"> </span>http://127.0.0.1:9001
+RootUser:<span class="w"> </span>minioadmin
+RootPass:<span class="w"> </span>minioadmin
+
+Command-line:<span class="w"> </span>https://docs.min.io/community/minio-object-store/reference/minio-mc.html
+<span class="w">   </span>$<span class="w"> </span>mc<span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>myminio<span class="w"> </span>http://192.0.2.10:9000<span class="w"> </span>minioadmin<span class="w"> </span>minioadmin
+
+Documentation:<span class="w"> </span>https://docs.min.io/community/minio-object-store/index.html
+
+WARNING:<span class="w"> </span>Detected<span class="w"> </span>default<span class="w"> </span>credentials<span class="w"> </span><span class="s1">&#39;minioadmin:minioadmin&#39;</span>,<span class="w"> </span>we<span class="w"> </span>recommend<span class="w"> </span>that<span class="w"> </span>you<span class="w"> </span>change<span class="w"> </span>these<span class="w"> </span>values<span class="w"> </span>with<span class="w"> </span><span class="s1">&#39;MINIO_ROOT_USER&#39;</span><span class="w"> </span>and<span class="w"> </span><span class="s1">&#39;MINIO_ROOT_PASSWORD&#39;</span><span class="w"> </span>environment<span class="w"> </span>variables.
+</pre></div>
+</div>
+<p>The process is tied to the current PowerShell or Command Prompt window.
+Closing the window stops the server and ends the process.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+</input><label class="sd-tab-label" for="sd-tab-item-1">
+Single-Drive</label><div class="sd-tab-content docutils">
+<p>Use this command to start a local MinIO instance in the <code class="docutils literal notranslate"><span class="pre">C:\minio</span></code> folder.
+You can replace <code class="docutils literal notranslate"><span class="pre">C:\minio</span></code> with another drive or folder path on the local</p>
+<div class="copyable highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span>\<span class="n">minio</span><span class="o">.</span><span class="n">exe</span> <span class="n">server</span> <span class="n">C</span><span class="p">:</span>\<span class="n">minio</span> <span class="o">--</span><span class="n">console</span><span class="o">-</span><span class="n">address</span> <span class="p">:</span><span class="mi">9001</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../reference/minio-server/minio-server.html#command-minio.server" title="minio.server"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">minio</span> <span class="pre">server</span></code></a> process prints its output to the system console, similar to the following:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>API:<span class="w"> </span>http://192.0.2.10:9000<span class="w">  </span>http://127.0.0.1:9000
+RootUser:<span class="w"> </span>minioadmin
+RootPass:<span class="w"> </span>minioadmin
+
+Console:<span class="w"> </span>http://192.0.2.10:9001<span class="w"> </span>http://127.0.0.1:9001
+RootUser:<span class="w"> </span>minioadmin
+RootPass:<span class="w"> </span>minioadmin
+
+Command-line:<span class="w"> </span>https://docs.min.io/community/minio-object-store/reference/minio-mc.html
+<span class="w">   </span>$<span class="w"> </span>mc<span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>myminio<span class="w"> </span>http://192.0.2.10:9000<span class="w"> </span>minioadmin<span class="w"> </span>minioadmin
+
+Documentation:<span class="w"> </span>https://docs.min.io/community/minio-object-store/index.html
+
+WARNING:<span class="w"> </span>Detected<span class="w"> </span>default<span class="w"> </span>credentials<span class="w"> </span><span class="s1">&#39;minioadmin:minioadmin&#39;</span>,<span class="w"> </span>we<span class="w"> </span>recommend<span class="w"> </span>that<span class="w"> </span>you<span class="w"> </span>change<span class="w"> </span>these<span class="w"> </span>values<span class="w"> </span>with<span class="w"> </span><span class="s1">&#39;MINIO_ROOT_USER&#39;</span><span class="w"> </span>and<span class="w"> </span><span class="s1">&#39;MINIO_ROOT_PASSWORD&#39;</span><span class="w"> </span>environment<span class="w"> </span>variables.
+</pre></div>
+</div>
+<p>The process is tied to the current PowerShell or Command Prompt window.
+Closing the window stops the server and ends the process.</p>
+</div>
+</div>
+</section>
+<section id="connect-your-browser-to-the-minio-server">
+<h3>3. Connect your Browser to the MinIO Server<a class="headerlink" href="#connect-your-browser-to-the-minio-server" title="Permalink to this heading"></a></h3>
+<p>Access the <a class="reference internal" href="../../administration/minio-console.html#minio-console"><span class="std std-ref">MinIO Console</span></a> by going to a browser (such as Microsoft Edge) and going to <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:9001</span></code> or one of the Console addresses specified in the <a class="reference internal" href="../../reference/minio-server/minio-server.html#command-minio.server" title="minio.server"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">minio</span> <span class="pre">server</span></code></a> command’s output.
+For example, <code class="docutils literal notranslate"><span class="pre">Console:</span> <span class="pre">http://192.0.2.10:9001</span> <span class="pre">http://127.0.0.1:9001</span></code> in the example output indicates two possible addresses to use for connecting to the Console.</p>
+<p>While port <code class="docutils literal notranslate"><span class="pre">9000</span></code> is used for connecting to the API, MinIO automatically redirects browser access to the MinIO Console.</p>
+<p>Log in to the Console with the <code class="docutils literal notranslate"><span class="pre">RootUser</span></code> and <code class="docutils literal notranslate"><span class="pre">RootPass</span></code> user credentials displayed in the output.
+These default to <code class="docutils literal notranslate"><span class="pre">minioadmin</span> <span class="pre">|</span> <span class="pre">minioadmin</span></code>.</p>
+<a class=""
+               data-lightbox="group-bbd9ce70-0417-4a14-ae4b-8f42b14f5f14"
+               href="../../_images/console-login1.png"
+               title=""
+               data-title=""
+               
+               ><img src="../../_images/console-login1.png"
+                     class="align-center"
+                     width="600px"
+                     height="auto"
+                     alt="MinIO Console displaying login screen"/>
+                </a><p>You can use the MinIO Console for general administration tasks like Identity and Access Management, Metrics and Log Monitoring, or Server Configuration.
+Each MinIO server includes its own embedded MinIO Console.</p>
+<a class=""
+               data-lightbox="group-601cc3c8-b8fa-4cee-a88a-8546bc707692"
+               href="../../_images/minio-console1.png"
+               title=""
+               data-title=""
+               
+               ><img src="../../_images/minio-console1.png"
+                     class="align-center"
+                     width="600px"
+                     height="auto"
+                     alt="MinIO Console displaying bucket start screen"/>
+                </a><p>For more information, see the <a class="reference internal" href="../../administration/minio-console.html#minio-console"><span class="std std-ref">MinIO Console</span></a> documentation.</p>
+</section>
+<section id="optional-install-the-minio-client">
+<h3>4. <cite>(Optional)</cite> Install the MinIO Client<a class="headerlink" href="#optional-install-the-minio-client" title="Permalink to this heading"></a></h3>
+<p>The <a class="reference internal" href="../../reference/minio-mc.html#minio-client"><span class="std std-ref">MinIO Client</span></a> allows you to work with your MinIO deployment from Powershell.</p>
+<p>Download the standalone MinIO client for Windows from the following link:</p>
+<p><a class="reference external" href="https://dl.min.io/client/mc/release/windows-amd64/mc.exe">https://dl.min.io/client/mc/release/windows-amd64/mc.exe</a></p>
+<p>Double click on the file to run it.
+Or, run the following in the Command Prompt or PowerShell.</p>
+<div class="copyable highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">path</span>\<span class="n">to</span>\<span class="n">mc</span><span class="o">.</span><span class="n">exe</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>Use <a class="reference internal" href="../../reference/minio-mc/mc-alias-set.html#command-mc.alias.set" title="mc.alias.set"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc.exe</span> <span class="pre">alias</span> <span class="pre">set</span></code></a> to quickly authenticate and connect to the MinIO deployment.</p>
+<div class="copyable highlight-shell notranslate"><div class="highlight"><pre><span></span>mc.exe<span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nb">local</span><span class="w"> </span>http://127.0.0.1:9000<span class="w"> </span>minioadmin<span class="w"> </span>minioadmin
+mc.exe<span class="w"> </span>admin<span class="w"> </span>info<span class="w"> </span><span class="nb">local</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../reference/minio-mc/mc-alias-set.html#command-mc.alias.set" title="mc.alias.set"><code class="xref minio minio-mc docutils literal notranslate"><span class="pre">mc.exe</span> <span class="pre">alias</span> <span class="pre">set</span></code></a> takes four arguments:</p>
+<ul class="simple">
+<li><p>The name of the alias</p></li>
+<li><p>The hostname or IP address and port of the MinIO server</p></li>
+<li><p>The Access Key for a MinIO <a class="reference internal" href="../../administration/identity-access-management/minio-user-management.html#minio-users"><span class="std std-ref">user</span></a></p></li>
+<li><p>The Secret Key for a MinIO <a class="reference internal" href="../../administration/identity-access-management/minio-user-management.html#minio-users"><span class="std std-ref">user</span></a></p></li>
+</ul>
+<p>For additional details about this command, see <a class="reference internal" href="../../reference/minio-mc/mc-alias-set.html#alias"><span class="std std-ref">mc alias set</span></a>.</p>
+</section>
+<section id="next-steps">
+<h3>5. Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h3>
+<p>ToDo</p>
+</section>
+</section>
+</section>
+
+
+            </div><div class="footer">
+   This work is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License.</a>
+   2020-Present, MinIO, Inc. 
+   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+      <img height="10" alt="Creative Commons License" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+   </a>
+</div>
+         </div>
+      </div>
+   </section><div id="cookie">
+    <div class="container">
+        <div class="cookie__text">
+            <strong>Your privacy is important to us:</strong>
+            We use cookies in order to give you a better experience. If you wish so, you can always review our 
+            <a target="_blank" rel="noreferrer noopener" href="https://min.io/privacy-policy">Privacy Policy</a>.
+        </div>
+
+        <button type="button" id="cookie__btn">Accept</button>
+    </div>
+</div><script>
+    // Dark mode and read mode detection
+
+    // Dark mode
+    /*var isDarkMode = localStorage.getItem("dark-mode");
+    var dmToggleBtn = document.getElementById("dark-mode-toggle");
+    if (isDarkMode === "true") {
+       document.documentElement.classList.add("dark-mode");
+       dmToggleBtn.classList.add("active");
+    }
+
+    // Read mode
+    var isReadMode = localStorage.getItem("read-mode");
+    var rmToggleBtn = document.getElementById("read-mode-toggle");
+
+    if (isReadMode === "true") {
+        document.documentElement.classList.add("read-mode");
+        rmToggleBtn.classList.add("active");
+    }*/
+ </script>
+  </body>
+</html>

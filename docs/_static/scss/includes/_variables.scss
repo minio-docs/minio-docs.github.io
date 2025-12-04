@@ -1,0 +1,81 @@
+// Colors
+$white: #ffffff;
+$black: #000000;
+$theme-red: #CF163E;
+
+// Gray shades light
+$light-100: #f3f4f6;
+$light-200: #e5e7eb;
+$light-300: #d1d5db;
+$light-400: #9ca3af;
+$light-500: #6b7280;
+
+// Gray shades dark
+$dark-0: #19202A;
+$dark-100: #212936;
+$dark-200: #273140;
+$dark-300: #2E394A;
+$dark-400: #59667A;
+$dark-500: #8A93A4;
+
+// Theme color palette
+$tertiary: #8C8C8C;
+$neutral-subtle: #D6DAE1;
+$border-subtle: #566176;
+
+// Breakpoints
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1280px
+);
+
+// z-index
+$z-index-header: 11;
+
+// Body
+$font-family-base: 'Geist', sans-serif;
+$font-family-heading: 'Satoshi', sans-serif;
+$font-family-mono: 'Geist Mono', sans-serif;
+$root-font-size: 1rem;
+$body-font-size: 1.125rem;
+$body-line-height: 1.6;
+
+// Text
+$text-dark-color: #A2ADC0;
+$headings-dark-color: #E3EEEF;
+
+// Font size
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 20px;
+
+// Layout
+$container-width: 1300px;
+
+// Font weight
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+// Header
+$header-light-bg: #031733;
+
+// Sidebar
+$sidebar-width: 19.75rem;
+
+// Border Radius
+$border-radius: 4px;
+$border-radius-md: 6px;
+$border-radius-lg: 8px;
+$border-radius-xl: 10px;
+
+
+// Nav - FIXME
+$nav-sub-hover-bg: #f8f8f8;
+$nav-mobile-bg: $white;
+$nav-mobile-width: 300px;
+$nav-active-z-index: 100;
