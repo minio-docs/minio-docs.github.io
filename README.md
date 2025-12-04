@@ -1,1 +1,0 @@
-# minio-docs.github.io
